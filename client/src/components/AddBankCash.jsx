@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchData, postData } from '../services/apiService';
 
 const InputField = ({ label, prefix, value, onChange, placeholder = "Enter value...", disabled }) => (
   <div className="mb-[4vw]">
@@ -60,7 +60,7 @@ const AddBankCash = ({ mobileNumber}) => {
 
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:3000/api/v1/bank", payload);
+      const response = await postData("/api/v1/bank", payload);
       console.log("Response:", response.data);
       alert("Bank details added successfully!");
       setHolderName("");

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, Smartphone, SquareCode } from 'lucide-react'; // Ensure SquareCode is imported
 import ErrorPopup from '../components/ErrorPopup';
 import SuccessPopup from '../components/SuccessPopup';
+import { fetchData, postData } from '../services/apiService';
 
 const Registration = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -78,7 +79,7 @@ const Registration = () => {
     setSuccessMessage('');
 
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/register', formData);
+      const response = await postData('/api/v1/register', formData);
       if (response.status === 201) {
         setSuccessMessage('Registration successful! Redirecting...');
         setFormData({

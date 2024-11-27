@@ -5,7 +5,7 @@ import meBg from '../assets/me_bg.png';
 import emptyIcon from '../assets/no_data.png';
 import PurchasedProducts from '../components/PurchasedProducts';
 import ExpiredProducts from '../components/ExpiredProducts';
-import axios from 'axios';
+import { fetchData, postData } from '../services/apiService';
 
 const MyOrder = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const MyOrder = () => {
   const getProductsData = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('http://localhost:3000/api/v1/my/product', {
+      const  data  = await fetchData('/api/v1/my/product', {
         params: { mobile: '7905321205' },
       });
       // Calculate total claimed from the products data

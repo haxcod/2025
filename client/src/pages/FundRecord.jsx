@@ -5,7 +5,7 @@ import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
 import emptyIcon from '../assets/no_data.png';
 import WithdrawOrder from '../components/WithdrawOrder';
 import DepositOrder from '../components/DepositOrder';
-import axios from 'axios';
+import { fetchData} from '../services/apiService';
 
 const TABS = {
   ACCOUNT: 'account',
@@ -26,13 +26,13 @@ const FundRecord = () => {
   // Fetch fund data from API
   const getFundData = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/transactions', {
+      const response = await fetchData('/api/v1/transactions', {
         params: { mobile: '7905321205' },
       });
-
+      
       // Update state with the array of transactions
-      if (response?.data?.data?.length > 0) {
-        setFundData(response.data.data);
+      if (response?.data?.length > 0) {
+        setFundData(response.data);
       } else {
         setFundData([]); // Reset state if no data
       }

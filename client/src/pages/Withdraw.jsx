@@ -7,7 +7,7 @@ import ToBind from '../components/ToBind';
 import ExplanationWithdraw from '../components/ExplainationWithdraw';
 import WithdrawUSDT from '../components/WithdrawUSDT';
 import AccountTypeSelector from '../components/AccountTypeSelector';
-import axios from 'axios';
+import { fetchData, postData } from '../services/apiService';
 
 const Withdraw = () => {
   const navigate = useNavigate();
@@ -25,11 +25,11 @@ const Withdraw = () => {
     try {
       setLoading(true); // Start loading
       setError(''); // Clear any previous error
-      const response = await axios.get('http://localhost:3000/api/v1/bank', {
+      const response = await fetchData('/api/v1/bank', {
         params: { mobile: '7905321205' },
       });
-      if (response.data.data && response.data.data.length > 0) {
-        const data = response.data.data.at(-1); // Get the latest data
+      if (response.data && response.data.length > 0) {
+        const data = response.data.at(-1); // Get the latest data
         setBankData({
           holderName: data.holder,
           mobile: data.mobile,

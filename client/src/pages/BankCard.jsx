@@ -4,28 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ExplanationBankCard from '../components/ExplanationBankCard';
 import AddBankCash from '../components/AddBankCash';
 import AddBankUSDT from '../components/AddBankUSDT';
-import { RiMoneyRupeeCircleFill, RiMoneyDollarCircleFill } from 'react-icons/ri';
 import AccountTypeSelector from '../components/AccountTypeSelector';
-
-// const InputField = ({ label, prefix, value, onChange, placeholder = "Enter value...", disabled = false }) => (
-//     <div className="mb-[4vw]">
-//       <div className="pb-[1.066667vw] text-[4vw] leading-[5.333333vw]">
-//         <span>{label}</span>
-//       </div>
-//       <div className={`border border-[#d9d9d9] rounded-[2.133333vw] h-[12.8vw] flex items-center w-full p-[2.666667vw_4.266667vw] overflow-hidden text-[#323233] text-[3.733333vw] ${disabled ? 'bg-gray-100' : 'bg-white'}`}>
-//         {prefix && <span className="text-[3.733333vw] text-[#4ca335] mr-[1.333333vw]">{prefix}</span>}
-//         <input
-//           type="tel"
-//           inputMode="numeric"
-//           className="block w-full bg-transparent outline-none"
-//           placeholder={placeholder}
-//           value={value}
-//           onChange={onChange}
-//           disabled={disabled}
-//         />
-//       </div>
-//     </div>
-//   );
 
 const BankCard = () => {
     const navigate = useNavigate();

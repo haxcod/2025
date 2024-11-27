@@ -4,7 +4,7 @@ import emptyIcon from '../assets/no_data.png';
 import CommentSample from '../components/CommentSample';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { fetchData } from '../services/apiService';
 
 const Comments = () => {
   const navigate = useNavigate();
@@ -15,11 +15,12 @@ const Comments = () => {
   // Function to fetch comments from the API
   const getComments = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/comment');
-      if (!response.data && !response.data.data) {
+      const response = await fetchData('/api/v1/comment');
+      
+      if (!response.data) {
         return <img src={emptyIcon} alt="No comments" className="w-[30vw] h-auto" />
       }
-      setComments(response.data.data);
+      setComments(response.data);
     } catch (err) {
       console.error("Error fetching comments:", err.message || err);
       setError("Failed to fetch comments.");

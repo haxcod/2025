@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { fetchData, postData } from '../services/apiService';
 
 const WithdrawCash = ({ bankData }) => {
   const [withdrawAmount, setWithdrawAmount] = useState('');
@@ -19,7 +20,7 @@ const WithdrawCash = ({ bankData }) => {
     const allData = { amount: withdrawAmount, mobile: bankData.mobile, type: 'debit' };
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/transactions',  allData );
+      const response = await postData('/api/v1/transactions',  allData );
       // console.log(response);
       
       if (response.status === 201) {

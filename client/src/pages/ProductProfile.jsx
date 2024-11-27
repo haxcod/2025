@@ -1,7 +1,7 @@
 import {useState, useMemo } from 'react';
 import { IoChevronBackSharp } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios'
+import { fetchData, postData } from '../services/apiService';
 import { format } from 'date-fns';
 
 const ProductProfile = () => {
@@ -63,7 +63,7 @@ const ProductProfile = () => {
     setError('');
     
     try {
-      const { data, status } = await axios.post('http://localhost:3000/api/v1/my/product', allData);
+      const { data, status } = await postData('/api/v1/my/product', allData);
       if (status === 201) {
         navigate(-1)
         // alert("Investment successfully recorded!");

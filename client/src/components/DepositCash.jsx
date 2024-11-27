@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { TbDiamondFilled } from "react-icons/tb";
-import axios from 'axios';
+import { fetchData, postData } from '../services/apiService';
 
 const DepositCash = ({ mobileNumber = '7905321205' }) => {
   const [depositAmount, setDepositAmount] = useState('');
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
 
   const handleQuickAmountClick = (amount) => {
     setDepositAmount(amount);
@@ -32,7 +33,7 @@ const DepositCash = ({ mobileNumber = '7905321205' }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/transactions', allData);
+      const response = await postData('/api/v1/transactions', allData);
 
       if (response.status === 201) {
         alert(`Deposited ₹${depositAmount} successfully!`);

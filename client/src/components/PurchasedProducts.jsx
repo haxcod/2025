@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import Popup from "./SuccessPopup";
 import { format } from 'date-fns';
+import { fetchData, postData,updateData } from '../services/apiService';
 
 const PurchasedProducts = ({ product, claim, setClaim }) => {
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,7 @@ const PurchasedProducts = ({ product, claim, setClaim }) => {
         throw new Error('A valid amount is required.');
       }
 
-      const response = await axios.patch('http://localhost:3000/api/v1/my/product/claim', {
+      const response = await updateData('/api/v1/my/product/claim', {
         productId,
         amount,
       });

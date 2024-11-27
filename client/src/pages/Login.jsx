@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import ErrorPopup from '../components/ErrorPopup';
 import SuccessPopup from '../components/SuccessPopup';
+import { fetchData, postData } from '../services/apiService';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -44,13 +45,13 @@ const Login = () => {
     setErrors({});
 
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/login', formData);
+      
+      const response = await postData('/api/v1/login', formData);
 
       if (response.status === 200) {
-        const { data } = response.data; // Assuming user data is in `response.data.data`
 
         // Save user data in cookies
-        setCookie('user', JSON.stringify(data), { path: '/', maxAge: 86400 }); // Cookie valid for 1 day
+        setCookie('user', JSON.stringify(response.data), { path: '/', maxAge: 86400 }); // Cookie valid for 1 day
 
         setFormData({ mobile: '', password: '' });
         setIsSuccessPopup(true); // Show success popup
