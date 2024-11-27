@@ -1,0 +1,83 @@
+{
+    "landfund": [
+      {
+        "fundName": "Land Fund No. 1",
+        "status": "Hot",
+        "revenueDays": 55,
+        "dailyEarnings": 198,
+        "totalRevenue": 10890,
+        "currentPrice": 495,
+        "vip": 1
+      },
+      {
+        "fundName": "Land Fund No. 3",
+        "status": "Trending",
+        "revenueDays": 70,
+        "dailyEarnings": 250,
+        "totalRevenue": 17500,
+        "currentPrice": 600,
+        "vip": 2
+      }
+    ],
+    "upgrade": [
+      {
+        "fundName": "Upgrade Fund No. 1",
+        "status": "Popular",
+        "revenueDays": 65,
+        "dailyEarnings": 220,
+        "totalRevenue": 14300,
+        "currentPrice": 550,
+        "vip": 1
+      },
+      {
+        "fundName": "Upgrade Fund No. 2",
+        "status": "New",
+        "revenueDays": 50,
+        "dailyEarnings": 180,
+        "totalRevenue": 9000,
+        "currentPrice": 400,
+        "vip": 0
+      }
+    ],
+    "seeds": [
+      {
+        "fundName": "Seed Fund No. 1",
+        "status": "Popular",
+        "revenueDays": 40,
+        "dailyEarnings": 150,
+        "totalRevenue": 6000,
+        "currentPrice": 400,
+        "vip": 2
+      },
+      {
+        "fundName": "Seed Fund No. 2",
+        "status": "Stable",
+        "revenueDays": 45,
+        "dailyEarnings": 160,
+        "totalRevenue": 7200,
+        "currentPrice": 450,
+        "vip": 1
+      }
+    ],
+    "mutual": [
+      {
+        "fundName": "Mutual Fund No. 1",
+        "status": "Stable",
+        "revenueDays": 30,
+        "dailyEarnings": 120,
+        "totalRevenue": 3600,
+        "currentPrice": 300,
+        "vip": 0
+      },
+      {
+        "fundName": "Mutual Fund No. 2",
+        "status": "Popular",
+        "revenueDays": 60,
+        "dailyEarnings": 200,
+        "totalRevenue": 12000,
+        "currentPrice": 500,
+        "vip": 1
+      }
+    ]
+  }
+  
