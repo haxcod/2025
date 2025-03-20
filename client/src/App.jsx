@@ -21,6 +21,7 @@ import ProductProfile from './pages/ProductProfile';
 import Login from './pages/Login';
 import Registration from './pages/Registration';
 import ProtectedRoute from './ProtectedRoute';
+import PaymentConfirmation from './components/PaymentConfirmation';
 
 function App() {
   const routes = createBrowserRouter([
@@ -103,6 +104,10 @@ function App() {
     {
       path: '/profile',
       element: <ProtectedRoute><ProductProfile /></ProtectedRoute>,
+    },
+    {
+      path: '/successful',
+      element: <ProtectedRoute><PaymentConfirmation/></ProtectedRoute>,
     },
   ]);
 

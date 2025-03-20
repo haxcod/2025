@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { fetchData, postData } from '../services/apiService';
+import PaymentConfirmation from './PaymentConfirmation';
+import { useNavigate } from 'react-router-dom';
 
 const WithdrawCash = ({ bankData }) => {
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleWithdraw = async () => {
     // Convert withdrawAmount to a number for proper validation
@@ -24,8 +27,9 @@ const WithdrawCash = ({ bankData }) => {
       // console.log(response);
       
       if (response.status === 201) {
-        alert(`Successfully withdrew ₹${withdrawAmount}`);
+        // alert(`Successfully withdrew ₹${withdrawAmount}`);
         setWithdrawAmount(''); // Clear the input field after successful withdrawal
+        navigate('/successful')
       }
     } catch (error) {
       console.error('Error during withdrawal:', error);
