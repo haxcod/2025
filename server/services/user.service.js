@@ -1,7 +1,7 @@
 const userModal = require('../models/user.model');
 const bcrypt = require('bcrypt');
 
-const createUser = async (name, email, mobile, password,inviteCode) => {
+const createUser = async (name, email, mobile, password, inviteCode) => {
   try {
     // Input validation
     if (!name || !email || !mobile || !password) {
@@ -24,7 +24,7 @@ const createUser = async (name, email, mobile, password,inviteCode) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Save the user to the database
-    const data = await userModal.create({ name, email, mobile, password: hashedPassword ,inviteCode});
+    const data = await userModal.create({ name, email, mobile, password: hashedPassword, inviteCode });
     return data;
   } catch (err) {
     console.error('Error in createUser:', err);
@@ -76,16 +76,26 @@ const getUserByMobile = async (mobile) => {
   }
 };
 
+const passwordChange = async (mobile, password) => {
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const changeData = userModal.findOneAndUpdate({ mobile: mobile }, { $set: { password: hashedPassword } }, { new: true, runValidators: true });
+    return changeData;
+  } catch (error) {
+    console.error('Error updating password:', error);
+    throw error;
+  }
+}
 
 const getInviteUser = async (id) => {
   try {
     const inviteUsers = await userModal.find({ id });
-    return inviteUsers; 
+    return inviteUsers;
   } catch (error) {
     console.error("Error fetching invite users:", error);
-    throw error; 
+    throw error;
   }
 };
 
 
-module.exports = { createUser, loginUser, getUserByEmail, getUserByMobile,getInviteUser };
+module.exports = { createUser, loginUser, getUserByEmail, getUserByMobile, getInviteUser, passwordChange };

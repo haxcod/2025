@@ -102,4 +102,18 @@ const getInviteUser = async (req, res) => {
 };
 
 
-module.exports = { createUser, loginUser,getInviteUser };
+const updatePassword = async (req,res)=>{
+  const {mobile,password} = req.body;
+  validateFields({ mobile, password });
+  try{
+   const data = userService.passwordChange(mobile,password);
+   res.json({ success: true, message: 'Password updated successfully' });
+  }catch(err){
+    console.error('Error updating password:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+
+}
+
+
+module.exports = { createUser, loginUser,getInviteUser,updatePassword };
