@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchData, postData } from '../services/apiService';
+import UserData from "../hooks/UserData";
 
 const InputField = ({ label, prefix, value, onChange, placeholder = "Enter value...", disabled }) => (
   <div className="mb-[4vw]">
@@ -26,7 +27,8 @@ const InputField = ({ label, prefix, value, onChange, placeholder = "Enter value
   </div>
 );
 
-const AddBankCash = ({ mobileNumber}) => {
+const AddBankCash = () => {
+  const user = UserData();
   const [holderName, setHolderName] = useState("");
   const [bankAccount, setBankAccount] = useState("");
   const [ifscCode, setIfscCode] = useState("");
@@ -45,14 +47,19 @@ const AddBankCash = ({ mobileNumber}) => {
     setIsFormValid(isValid);
   }, [holderName, bankAccount, ifscCode]);
 
+  
+
   const handleSubmit = async () => {
     if (!isFormValid) {
       setError("Please correct the form fields before proceeding.");
       return;
     }
+    
+    
+    
 
     const payload = {
-      mobile: mobileNumber,
+      mobile: user.userData.mobile,
       holder: holderName,
       account: bankAccount,
       ifsc: ifscCode,
@@ -77,7 +84,7 @@ const AddBankCash = ({ mobileNumber}) => {
   return (
     <>
       <div className="p-[4vw_2.666667vw_2.666667vw] rounded-[2.666667vw] bg-white mb-[2.666667vw]">
-        <InputField label="Mobile number" value={mobileNumber} disabled />
+        <InputField label="Mobile number" value={user.userData.mobile} disabled />
         <InputField
           label="Holder Name"
           placeholder="Enter holder name..."

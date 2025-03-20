@@ -30,9 +30,26 @@ const DepositCash = ({ mobileNumber = '7905321205' }) => {
     }
 
     const allData = { amount: depositAmount, mobile: mobileNumber, type: 'credit' };
+    const paymentData = {
+      customer_mobile: mobileNumber,
+      merch_id: "MHJI41SVAX5L1742385529",
+      amount: depositAmount,
+      order_id: "ORD" + Date.now(),
+      currency: "INR",
+      redirect_url: "https://example.com/thankyou",
+    };
     setLoading(true);
+    setError("");
 
     try {
+      const paymentResponse = await postData("https://fastzix.in/api/v1/order", paymentData);
+      if (paymentResponse && paymentResponse.status===true) {
+        // Redirect user to the payment gateway
+        window.location.href = response.result.payment_url;
+      } else {
+        throw new Error("Invalid payment response");
+      }
+
       const response = await postData('/api/v1/transactions', allData);
 
       if (response.status === 201) {
