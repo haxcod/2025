@@ -1,21 +1,22 @@
-import { useEffect, useState } from 'react';
-import { IoChevronBackSharp } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
-import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
-import emptyIcon from '../assets/no_data.png';
-import WithdrawOrder from '../components/WithdrawOrder';
-import DepositOrder from '../components/DepositOrder';
-import { fetchData} from '../services/apiService';
+import { useEffect, useState } from "react";
+import { IoChevronBackSharp } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
+import emptyIcon from "../assets/no_data.png";
+import WithdrawOrder from "../components/WithdrawOrder";
+import DepositOrder from "../components/DepositOrder";
+import { fetchData } from "../services/apiService";
 
 const TABS = {
-  ACCOUNT: 'account',
-  DEPOSIT: 'deposit',
-  WITHDRAW: 'withdraw',
+  ACCOUNT: "Account",
+  DEPOSIT: "Deposit",
+  WITHDRAW: "Withdraw",
 };
 
 const FundRecord = () => {
   const navigate = useNavigate();
-  const [fundData, setFundData] = useState([]); // Initialize as an array for multiple transactions
+  const [fundData, setFundData] = useState([]); // Stores all transactions
+  const [filteredData, setFilteredData] = useState([]); // Stores filtered transactions
   const [isActive, setIsActive] = useState(TABS.ACCOUNT);
 
   // Handle button click
@@ -23,32 +24,55 @@ const FundRecord = () => {
     setIsActive(type);
   };
 
+  useEffect(() => {
+    let filtered = [];
+    if (isActive === TABS.WITHDRAW) {
+      filtered = fundData.filter((item) => item.type === "debit");
+    } else if (isActive === TABS.DEPOSIT) {
+      filtered = fundData.filter((item) => item.type === "credit");
+    } else {
+      filtered = fundData;
+    }
+    setFilteredData(filtered);
+  }, [isActive, fundData]);
+
   // Fetch fund data from API
   const getFundData = async () => {
     try {
-      const response = await fetchData('/api/v1/transactions', {
-        params: { mobile: '7905321205' },
+      const response = await fetchData("/api/v1/transactions", {
+        params: { mobile: "7905321205" },
       });
-      
-      // Update state with the array of transactions
+
       if (response?.data?.length > 0) {
-        setFundData(response.data);
+        setFundData(response.data); // Store all data
       } else {
-        setFundData([]); // Reset state if no data
+        setFundData([]);
       }
     } catch (err) {
-      console.error('Error fetching fund data:', err);
+      console.error("Error fetching fund data:", err);
     }
   };
 
-  // Fetch fund data when the component mounts
+  // Fetch data when the component mounts
   useEffect(() => {
     getFundData();
   }, []);
 
+  // useEffect(() => {
+  //   let filtered = [];
+  //   if (isActive === TABS.ACCOUNT) {
+  //     filtered = fundData.filter((item) => item.type === "credit");
+  //   } else if (isActive === TABS.DEPOSIT) {
+  //     filtered = fundData.filter((item) => item.type === "debit");
+  //   } else {
+  //     filtered = fundData; // Show all for Withdraw or other tabs
+  //   }
+  //   setFilteredData(filtered);
+  // }, [fundData, isActive]);
+
   // Render each transaction as either a WithdrawOrder or DepositOrder
   const renderTransactions = () => {
-    if (fundData.length === 0) {
+    if (filteredData.length === 0) {
       return (
         <div className="m-[20vh_0] flex items-center justify-center">
           <img src={emptyIcon} alt="No Data" />
@@ -56,12 +80,15 @@ const FundRecord = () => {
       );
     }
 
-    return fundData.slice().reverse().map((item, index) => {
-      if (item.type === 'debit') {
-        return <WithdrawOrder key={index} data={item} />;
-      }
-      return <DepositOrder key={index} data={item} />;
-    });
+    return filteredData
+      .slice()
+      .reverse()
+      .map((item, index) => {
+        if (item.type === "debit") {
+          return <WithdrawOrder key={index} data={item} />;
+        }
+        return <DepositOrder key={index} data={item} />;
+      });
   };
 
   const renderTabButton = (label, type) => {
@@ -69,13 +96,19 @@ const FundRecord = () => {
     return (
       <div
         className={`rounded-[4.266667vw] w-[31%] flex justify-center items-center border-[.266667vw] border-[#f0f0f0] text-[#323233] font-semibold transition-colors duration-500 ${
-          isActiveTab ? 'bg-[#4CA335]' : 'bg-white'
+          isActiveTab ? "bg-[#4CA335]" : "bg-white"
         }`}
         onClick={() => handleClick(type)}
         role="button"
         aria-pressed={isActiveTab}
       >
-        <span className={`font-normal ${isActiveTab ? 'text-white' : 'text-[#343434]'}`}>{label}</span>
+        <span
+          className={`font-normal ${
+            isActiveTab ? "text-white" : "text-[#343434]"
+          }`}
+        >
+          {label}
+        </span>
       </div>
     );
   };
@@ -92,7 +125,9 @@ const FundRecord = () => {
               <IoChevronBackSharp />
             </button>
           </div>
-          <div className="w-1/3 flex justify-center items-center">Fund Record</div>
+          <div className="w-1/3 flex justify-center items-center">
+            Fund Record
+          </div>
         </div>
       </header>
 
@@ -100,9 +135,9 @@ const FundRecord = () => {
         <div className="mt-[2.933333vw] relative">
           <div className="h-[11.733333vw] text-[3.733333vw]">
             <div className="flex justify-between h-[8.666667vw] bg-transparent box-content pb-[4vw]">
-              {renderTabButton('Account', TABS.ACCOUNT)}
-              {renderTabButton('Deposit', TABS.DEPOSIT)}
-              {renderTabButton('Withdraw', TABS.WITHDRAW)}
+              {renderTabButton("Account", TABS.ACCOUNT)}
+              {renderTabButton("Deposit", TABS.DEPOSIT)}
+              {renderTabButton("Withdraw", TABS.WITHDRAW)}
             </div>
           </div>
         </div>

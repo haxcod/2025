@@ -1,66 +1,84 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true, // Name is mandatory
-      trim: true, // Removes leading/trailing whitespaces
+      required: true,
+      trim: true,
     },
     email: {
       type: String,
       required: true,
-      unique: true, // Ensures email is unique
+      unique: true,
       trim: true,
-      lowercase: true, // Converts email to lowercase
-      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Regex for basic email validation
+      lowercase: true,
+      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     },
     mobile: {
       type: String,
       required: true,
-      unique: true, // Ensures mobile number is unique
-      match: /^\d{10}$/, // Validates a 10-digit mobile number
+      unique: true,
+      match: /^\d{10}$/,
     },
     id: {
       type: String,
       unique: true,
+      default: () => uuidv4().replace(/-/g, "").slice(0, 8).toUpperCase(), // Ensures better uniqueness
     },
     inviteCode: {
       type: String,
+      unique: true,
+      default: function generateInviteCode() {
+        return uuidv4().slice(0, 6).toUpperCase();
+      },
     },
+    invitedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     password: {
       type: String,
       required: true,
-      minlength: 6, // Minimum length for security
+      minlength: 6,
     },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 
-// Function to generate a random 8-character alphanumeric ID
-function generateUniqueId() {
-  return Math.random().toString(36).substring(2, 10).toUpperCase();
-}
+// Virtual field to get users invited by this user
+userSchema.virtual("invitedUsers", {
+  ref: "User",
+  localField: "_id",
+  foreignField: "invitedBy",
+});
 
-// Pre-save hook to ensure the `id` field is populated with a unique value
-userSchema.pre('save', async function (next) {
-  if (!this.id) {
-    this.id = generateUniqueId();
+// Pre-save hook to ensure inviteCode is unique (handles rare duplicate cases)
+// userSchema.pre("save", async function (next) {
+//   if (!this.inviteCode) {
+//     let code;
+//     let exists;
+//     do {
+//       code = uuidv4().slice(0, 8);
+//       exists = await mongoose.models.User.findOne({ inviteCode: code });
+//     } while (exists);
+//     this.inviteCode = code;
+//   }
+//   if (this.isModified("password")) {
+//     this.password = await bcrypt.hash(this.password, 10);
+//   }
+
+//   next();
+// });
+
+// Pre-save hook to hash password securely
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
   }
   next();
 });
 
-// Pre-save hook to hash password (if uncommented)
-// userSchema.pre('save', async function (next) {
-//   if (this.isModified('password')) {
-//     const bcrypt = require('bcrypt');
-//     this.password = await bcrypt.hash(this.password, 10); // Hash password with salt rounds
-//   }
-//   next();
-// });
-
-const User = mongoose.model('User', userSchema);
-
+const User = mongoose.model("User", userSchema);
 module.exports = User;

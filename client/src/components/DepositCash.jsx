@@ -42,13 +42,13 @@ const DepositCash = ({ mobileNumber = '7905321205' }) => {
     setError("");
 
     try {
-      const paymentResponse = await postData("https://fastzix.in/api/v1/order", paymentData);
-      if (paymentResponse && paymentResponse.status===true) {
-        // Redirect user to the payment gateway
-        window.location.href = response.result.payment_url;
-      } else {
-        throw new Error("Invalid payment response");
-      }
+      // const paymentResponse = await postData("https://fastzix.in/api/v1/order", paymentData);
+      // if (paymentResponse && paymentResponse.status===true) {
+      //   // Redirect user to the payment gateway
+      //   window.location.href = response.result.payment_url;
+      // } else {
+      //   throw new Error("Invalid payment response");
+      // }
 
       const response = await postData('/api/v1/transactions', allData);
 

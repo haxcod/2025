@@ -1,28 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { IoChevronBackSharp } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
-import teamBg from '../assets/team_bg.png';
-import InviteList from '../components/InviteList';
+import React, { useCallback, useEffect, useState } from "react";
+import { IoChevronBackSharp } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+import teamBg from "../assets/team_bg.png";
+import InviteList from "../components/InviteList";
 import { IoIosArrowDown } from "react-icons/io";
-import UserData from '../hooks/UserData';
-
+import UserData from "../hooks/UserData";
+import { fetchData } from "../services/apiService";
 
 const Team = () => {
-  const [inviteUrl, setInviteUrl] = useState('')
+  const [inviteUrl, setInviteUrl] = useState("");
   const navigate = useNavigate();
   const data = UserData();
+  const [invitedUsers, setInvitedUsers] = useState([]);
   useEffect(() => {
     if (data?.userData?.id) {
-      const currentUrl = window.location.origin ;
+      const currentUrl = window.location.origin;
       setInviteUrl(`${currentUrl}/register?inviteCode=${data.userData.id}`);
     }
-  }, [data])
+  }, [data]);
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(inviteUrl)
-      .then(() => alert('Link copied to clipboard!'))
-      .catch(() => alert('Failed to copy the link.'));
+    navigator.clipboard
+      .writeText(inviteUrl)
+      .then(() => alert("Link copied to clipboard!"))
+      .catch(() => alert("Failed to copy the link."));
   };
+
+  const fetchInvitedUsers = useCallback(async () => {
+    try {
+      const response = await fetchData("api/v1/invites", {
+        params: { userId: data.userData._id },
+      });
+      setInvitedUsers(response.data);
+    } catch (error) {
+      console.error("Failed to fetch invited users:", error);
+    }
+  }, [data.userData._id]);
+
+  useEffect(() => {
+    fetchInvitedUsers();
+  }, [fetchInvitedUsers]);
 
   return (
     <div className="bg-gradient-to-b from-[#ecfade] to-[#efefef] min-h-screen flex flex-col">
@@ -38,9 +55,7 @@ const Team = () => {
               <IoChevronBackSharp />
             </button>
           </div>
-          <div className="w-1/3 flex justify-center items-center">
-            Team
-          </div>
+          <div className="w-1/3 flex justify-center items-center">Team</div>
           <div className="w-1/3"></div>
         </div>
       </header>
@@ -68,7 +83,9 @@ const Team = () => {
 
       {/* Invite Link Section */}
       <div className="rounded-[2.666667vw] bg-white p-[4vw] m-[2.666667vw_4vw_4vw]">
-        <h2 className="text-[4.266667vw] font-bold mb-[2.4vw]">Invitation Link</h2>
+        <h2 className="text-[4.266667vw] font-bold mb-[2.4vw]">
+          Invitation Link
+        </h2>
         <div className="flex justify-between items-center gap-2">
           <div className="border border-opacity-15 rounded-[2.133333vw] p-[2.133333vw] text-[2.933333vw] text-opacity-85 leading-[4vw] h-[12.8vw] w-[59.866667vw] break-words">
             {inviteUrl}
@@ -87,7 +104,7 @@ const Team = () => {
       <div className="max-h-80 rounded-[2.666667vw] bg-white p-[4.933333vw_3.466667vw_10vw] mt-[6.666667vw]">
         <div className="flex items-center justify-between">
           <p className="text-[4.266667vw] font-bold mb-[1.333333vw] flex items-center gap-2">
-            Level 1 teams 
+            Level 1 teams
             <span className="text-[2.933333vw] text-black text-opacity-40">
               (<span className="text-[#4ca335]">0</span>/ 1)
             </span>
@@ -99,12 +116,22 @@ const Team = () => {
 
         <div className="box-border">
           <div className="h-[98%] pb-[2.666667vw] mt-[6.666667vw]">
-            <InviteList />
-            <InviteList />
-            <InviteList />
-            <InviteList />
+            {invitedUsers.length > 0 ? (
+              invitedUsers.map((user, index) => (
+                <InviteList
+                  key={index}
+                  mobile={user.mobile}
+                  id={user.id}
+                  createdAt={user.createdAt}
+                />
+              ))
+            ) : (
+              <p>No invited users yet.</p>
+            )}
           </div>
-          <div className="flex items-center justify-center w-full h-[13.333333vw] text-[3.733333vw] text-[#888]">No more</div>
+          <div className="flex items-center justify-center w-full h-[13.333333vw] text-[3.733333vw] text-[#888]">
+            No more
+          </div>
         </div>
       </div>
     </div>

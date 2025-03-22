@@ -9,23 +9,29 @@ const createUser = async (name, email, mobile, password, inviteCode) => {
     }
 
     // Check if the user already exists by email or mobile
-    const existingUserByEmail = await getUserByEmail(email);
-    const existingUserByMobile = await getUserByMobile(mobile);
-
-    if (existingUserByEmail) {
-      throw new Error('A user with this email already exists');
+    const existingUser = await userModal.findOne({ $or: [{ email }, { mobile }] });
+    if (existingUser) {
+      throw new Error('Email or mobile already in use.');
     }
 
-    if (existingUserByMobile) {
-      throw new Error('A user with this mobile number already exists');
-    }
-
-    // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+    let inviter = null;
+    if (inviteCode) {
+      inviter = await userModal.findOne({ inviteCode });
+      if (!inviter) {
+        throw new Error('Invalid invite code');
+      }
+    }  
+  
     // Save the user to the database
-    const data = await userModal.create({ name, email, mobile, password: hashedPassword, inviteCode });
-    return data;
+    const user = await userModal.create({
+      name,
+      email,
+      mobile,
+      password,
+      invitedBy: inviter ? inviter._id : null,
+    });
+    return user;
+
   } catch (err) {
     console.error('Error in createUser:', err);
     throw new Error(err.message || 'Failed to create user');
@@ -38,15 +44,15 @@ const loginUser = async (mobile, password) => {
     if (!mobile || !password) {
       throw new Error('Both mobile and password are required');
     }
-
+    
     // Find the user by mobile number
-    const user = await getUserByMobile(mobile);
+    const user = await userModal.findOne({mobile});
     if (!user) {
       throw new Error('User not found');
     }
-
     // Compare the entered password with the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    
     if (!isPasswordValid) {
       throw new Error('Invalid password');
     }
@@ -55,24 +61,6 @@ const loginUser = async (mobile, password) => {
   } catch (err) {
     console.error('Error in loginUser:', err);
     throw new Error(err.message || 'Login failed');
-  }
-};
-
-const getUserByEmail = async (email) => {
-  try {
-    return await userModal.findOne({ email });
-  } catch (err) {
-    console.error('Error in getUserByEmail:', err);
-    throw new Error('Error fetching user by email');
-  }
-};
-
-const getUserByMobile = async (mobile) => {
-  try {
-    return await userModal.findOne({ mobile });
-  } catch (err) {
-    console.error('Error in getUserByMobile:', err);
-    throw new Error('Error fetching user by mobile number');
   }
 };
 
@@ -87,15 +75,15 @@ const passwordChange = async (mobile, password) => {
   }
 }
 
-const getInviteUser = async (id) => {
+const getInvitedUsers = async (userId) => {
   try {
-    const inviteUsers = await userModal.find({ id });
-    return inviteUsers;
+    const invitedUsers = await userModal.find({ invitedBy: userId }).select("id mobile createdAt");
+     return invitedUsers;
   } catch (error) {
-    console.error("Error fetching invite users:", error);
+    console.error('Error invite user:', error);
     throw error;
   }
 };
 
 
-module.exports = { createUser, loginUser, getUserByEmail, getUserByMobile, getInviteUser, passwordChange };
+module.exports = { createUser, loginUser, getInvitedUsers, passwordChange };

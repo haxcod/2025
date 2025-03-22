@@ -16,21 +16,6 @@ const createUser = async (req, res) => {
   try {
     // Validate required fields
     validateFields({ name, email, mobile, password });
-    const userAlready = await userService.getUserByMobile(mobile);
-    if (userAlready) {
-      return res.status(400).json({
-        status: 400,
-        message: 'User already exists with this mobile number',
-      });
-    }
-    const userEmailAlready = await userService.getUserByEmail(email);
-    if (userEmailAlready) {
-      return res.status(400).json({
-        status: 400,
-        message: 'this email id is already exist',
-      });
-    }
-
     // Call service to create the user
     const user = await userService.createUser(name, email, mobile, password,inviteCode);
     res.status(201).json({
@@ -71,10 +56,10 @@ const loginUser = async (req, res) => {
 const getInviteUser = async (req, res) => {
   try {
     // Extract `id` from query parameters
-    const { id } = req.query;
-
+    const { userId } = req.query;  // Extract from query params
+     
     // Validate `id`
-    if (!id) {
+    if (!userId) {
       return res.status(400).json({
         status: 400,
         message: "ID is required in query parameters.",
@@ -82,7 +67,7 @@ const getInviteUser = async (req, res) => {
     }
 
     // Call the service to get users
-    const inviteUser = await userService.getInviteUser(id);
+    const inviteUser = await userService.getInvitedUsers(userId);
 
     // Respond with the result
     res.status(200).json({
@@ -100,7 +85,6 @@ const getInviteUser = async (req, res) => {
     });
   }
 };
-
 
 const updatePassword = async (req,res)=>{
   const {mobile,password} = req.body;
