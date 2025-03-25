@@ -1,21 +1,18 @@
 // Deposit.jsx
-import React, { useEffect, useState } from 'react';
 import { IoChevronBackSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
-import withdrawImg from '../assets/withdraw.png';
+// import withdrawImg from '../assets/withdraw.png';
 import DepositCash from '../components/DepositCash';
-import DepositUSDT from '../components/DepositUSDT';
+// import DepositUSDT from '../components/DepositUSDT';
 import AccountBalance from '../components/AccountBalance';
 import ExplanationDeposit from '../components/ExplanationDeposit';
-import AccountTypeSelector from '../components/AccountTypeSelector';
+// import AccountTypeSelector from '../components/AccountTypeSelector';
+import UserData from '../hooks/UserData';
 
 const Deposit = () => {
   const navigate = useNavigate();
-  const [isActive, setIsActive] = useState(1);
-
-  useEffect(()=>{
-    console.log(isActive);
-  })
+    const {userData} = UserData()
+  // const [isActive, setIsActive] = useState(1);
   
 
   return (
@@ -32,10 +29,10 @@ const Deposit = () => {
       </header>
 
       <div className="p-[0_4.533333vw]">
-      <AccountTypeSelector isActive={isActive} setIsActive={setIsActive} />
-        <AccountBalance/>
-
-        {isActive === 1 ? <DepositCash /> : <DepositUSDT />}
+      {/* <AccountTypeSelector isActive={isActive} setIsActive={setIsActive} /> */}
+        <AccountBalance mobileNumber={userData.mobile}/>
+        <DepositCash  mobileNumber={userData.mobile}/>
+        {/* {isActive === 1 ? <DepositCash /> : <DepositUSDT />} */}
         <ExplanationDeposit/>
       </div>
     </div>

@@ -21,6 +21,10 @@ const transactionSchema = new mongoose.Schema(
             enum: ['credit', 'debit'], // Restricts to 'credit' or 'debit'
             message: '{VALUE} is not a valid transaction type.',
         },
+        description:{
+            type: String,
+            required: true,
+        }
     },
     {
         timestamps: true, // Automatically adds createdAt and updatedAt fields

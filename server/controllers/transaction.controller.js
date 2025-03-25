@@ -1,20 +1,20 @@
 const transactionService = require('../services/transaction.service');
 
 const createTransaction = async (req, res) => {
-    const { mobile, amount, type } = req.body;
+    const { mobile, amount, type,description } = req.body;
     
     // Validate input
-    if (!mobile || !amount || !type) {
+    if (!mobile || !amount || !type|| !description) {
         
         return res.status(400).json({
             status: 400,
-            message: "All fields (mobile, amount, type) are required.",
+            message: "All fields (mobile, amount, type,description) are required.",
         });
     }
 
     try {
         // Call the service to create the transaction
-        const transaction = await transactionService.transactionData(mobile, amount, type);
+        const transaction = await transactionService.transactionData(mobile, amount, type,description);
         return res.status(201).json({
             status: 201,
             message: "Transaction created successfully.",
@@ -56,5 +56,44 @@ const getTransactions = async (req, res) => {
         });
     }
 };
+
+const rechargePayU = async (req, res) => {
+    try {
+        const { firstname, email, mobile, amount } = req.body;
+
+        // Validate required fields
+        if (!firstname || !email || !mobile || !amount) {
+            return res.status(400).json({
+                status: 400,
+                message: "Missing required fields: firstname, email, mobile, amount",
+            });
+        }
+
+        // Validate amount (should be a positive number)
+        if (isNaN(amount) || amount <= 0) {
+            return res.status(400).json({
+                status: 400,
+                message: "Invalid amount. It must be a positive number.",
+            });
+        }
+
+        // Call service function
+        const data = await transactionService.rechargePayU({ firstname, email, mobile, amount });
+
+        return res.json({
+            status: 200,
+            message: "Transaction initiated successfully",
+            data,
+        });
+
+    } catch (err) {
+        console.error("Error in rechargePayU:", err);
+        return res.status(500).json({
+            status: 500,
+            message: err.message || "Internal server error",
+        });
+    }
+};
+
 
 module.exports = { createTransaction, getTransactions };

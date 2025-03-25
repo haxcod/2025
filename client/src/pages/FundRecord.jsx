@@ -43,8 +43,9 @@ const FundRecord = () => {
         params: { mobile: "7905321205" },
       });
 
-      if (response?.data?.length > 0) {
-        setFundData(response.data); // Store all data
+      if (response?.data?.transactions.length > 0) {
+        
+        setFundData(response.data.transactions); // Store all data
       } else {
         setFundData([]);
       }

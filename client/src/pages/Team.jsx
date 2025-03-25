@@ -11,11 +11,11 @@ const Team = () => {
   const [inviteUrl, setInviteUrl] = useState("");
   const navigate = useNavigate();
   const data = UserData();
-  const [invitedUsers, setInvitedUsers] = useState([]);
+  const [invitedData, setInvitedData] = useState([]);
   useEffect(() => {
     if (data?.userData?.id) {
       const currentUrl = window.location.origin;
-      setInviteUrl(`${currentUrl}/register?inviteCode=${data.userData.id}`);
+      setInviteUrl(`${currentUrl}/register?inviteCode=${data.userData.inviteCode}`);
     }
   }, [data]);
 
@@ -31,7 +31,9 @@ const Team = () => {
       const response = await fetchData("api/v1/invites", {
         params: { userId: data.userData._id },
       });
-      setInvitedUsers(response.data);
+      
+      setInvitedData(response.data);
+      
     } catch (error) {
       console.error("Failed to fetch invited users:", error);
     }
@@ -67,16 +69,16 @@ const Team = () => {
       >
         <div className="mb-[5.333333vw]">
           <p>Obtain Today Commission</p>
-          <p className="font-bold text-[6.4vw] mt-[1.333333vw]">₹0</p>
+          <p className="font-bold text-[6.4vw] mt-[1.333333vw]">₹{invitedData.todayCommission || 0}</p>
         </div>
         <div className="flex items-center justify-between leading-[4.333333vw]">
           <div>
             <p>Obtain Total Commission</p>
-            <p className="font-medium text-[5.333333vw] mt-[1.333333vw]">₹0</p>
+            <p className="font-medium text-[5.333333vw] mt-[1.333333vw]">₹{invitedData.totalCommission || 0}</p>
           </div>
           <div>
             <p>Total number of teams</p>
-            <p className="font-medium text-[5.333333vw] mt-[1.333333vw]">₹0</p>
+            <p className="font-medium text-[5.333333vw] mt-[1.333333vw]">₹{invitedData.invitedUsers?.length || 0}</p>
           </div>
         </div>
       </div>
@@ -116,8 +118,8 @@ const Team = () => {
 
         <div className="box-border">
           <div className="h-[98%] pb-[2.666667vw] mt-[6.666667vw]">
-            {invitedUsers.length > 0 ? (
-              invitedUsers.map((user, index) => (
+            {invitedData.invitedUsers?.length > 0 ? (
+              invitedData.invitedUsers?.map((user, index) => (
                 <InviteList
                   key={index}
                   mobile={user.mobile}
