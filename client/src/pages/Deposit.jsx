@@ -8,12 +8,17 @@ import AccountBalance from '../components/AccountBalance';
 import ExplanationDeposit from '../components/ExplanationDeposit';
 // import AccountTypeSelector from '../components/AccountTypeSelector';
 import UserData from '../hooks/UserData';
+import useTransactionStore from '../store/TransactionStore';
+import { useEffect } from 'react';
 
 const Deposit = () => {
   const navigate = useNavigate();
     const {userData} = UserData()
   // const [isActive, setIsActive] = useState(1);
-  
+  const {summary,fetchTransactions}=useTransactionStore();
+  useEffect(()=>{
+      fetchTransactions(userData.mobile)
+    },[userData.mobile])
 
   return (
     <div className="bg-gradient-to-b from-[#ecfade] to-[#efefef] min-h-screen flex flex-col">
@@ -30,7 +35,7 @@ const Deposit = () => {
 
       <div className="p-[0_4.533333vw]">
       {/* <AccountTypeSelector isActive={isActive} setIsActive={setIsActive} /> */}
-        <AccountBalance mobileNumber={userData.mobile}/>
+        <AccountBalance balance={summary.totalDeposit} mobileNumber={userData.mobile}/>
         <DepositCash  mobileNumber={userData.mobile}/>
         {/* {isActive === 1 ? <DepositCash /> : <DepositUSDT />} */}
         <ExplanationDeposit/>
