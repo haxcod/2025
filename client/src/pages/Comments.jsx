@@ -62,7 +62,7 @@ const Comments = () => {
         ) : (
           <div>
             {comments.map((item, index) => (
-              <CommentSample key={index} image={item.image} score={item.score} utterance={item.utterance} />
+              <CommentSample key={index} image={item.image} mobile={item.mobile} score={item.score} utterance={item.utterance} />
             ))}
           </div>
         )}
