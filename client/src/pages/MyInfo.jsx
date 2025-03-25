@@ -1,7 +1,8 @@
 import React from 'react';
 import { IoChevronBackSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
-import editIcon from '../assets/edit_icon.png';
+import Logo from '/logo-rounded.png'
+// import editIcon from '../assets/edit_icon.png';
 
 const MyInfo = () => {
   const navigate = useNavigate();
@@ -31,13 +32,13 @@ const MyInfo = () => {
         <div className="w-[32vw] absolute left-0 right-0 m-auto top-[-16.666667vw]">
           <div className="relative size-[32vw] rounded-full">
             <img
-              className="rounded-full w-full h-full object-cover bg-[#f7f8fa] transition-colors duration-300"
-              src="https://api.dehaatll.com/storage/client/default.jpg"
+              className="rounded-full border-4 w-full h-full object-cover bg-[#f7f8fa] transition-colors duration-300"
+              src={Logo}
               alt="Avatar"
             />
             <input type="file" className="w-0 h-0 invisible" accept="image/*" />
             <div className="absolute right-0 bottom-[1.333333vw] size-[8.533333vw]">
-              <img src={editIcon} className='w-full h-full' alt="Edit Icon" />
+              {/* <img src={editIcon} className='w-full h-full' alt="Edit Icon" /> */}
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React from 'react'
 import UserData from '../hooks/UserData'
 import MaskedNumber from '../hooks/MaskedNumber';
+import Logo from '/logo-rounded.png'
 
 const UserInfo = () => {
 
@@ -10,8 +11,8 @@ const UserInfo = () => {
       <div className="items-center flex">
         <div className="h-[17.0667vw] w-[17.0667vw] rounded-full mr-[4.26667vw]">
           <img
-            src="https://api.dehaatll.com/storage/client/default.jpg"
-            className="rounded-full"
+            src={Logo}
+            className="rounded-full border-4"
             alt="User Profile"
           />
         </div>

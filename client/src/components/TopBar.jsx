@@ -1,6 +1,7 @@
 import React from 'react'
 import { IoMdNotificationsOutline } from "react-icons/io";
 import MaskedNumber from '../hooks/MaskedNumber';
+import Logo from '/logo-rounded.png'
 
 const TopBar = ({userData}) => {
   
@@ -9,7 +10,8 @@ const TopBar = ({userData}) => {
     <div className="items-center flex">
       <div className="h-[11.2vw] w-[11.2vw] rounded-full">
         <img
-          src="https://api.dehaatll.com/storage/client/default.jpg"
+          src={Logo}
+          className='border-4 rounded-full'
         />
       </div>
       <div className="ml-[3.2vw] text-[#242424]">

@@ -7,6 +7,7 @@ import rsIcon from "../assets/rs_icon.png";
 import LevelItem from "../components/LevelItem";
 import useTransactionStore from "../store/TransactionStore";
 import levelData from '../data/levelData.json';
+import Logo from '/logo-rounded.png'
 
 const VipLevel = () => {
   const navigate = useNavigate();
@@ -65,9 +66,9 @@ const VipLevel = () => {
         <div className="flex items-center">
           <div className="w-[14.666667vw] h-[14.666667vw] rounded-full overflow-hidden mr-[3.333333vw]">
             <img
-              src="https://api.dehaatll.com/storage/client/default.jpg"
+              src={Logo}
               alt="User Profile"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-full border-4"
             />
           </div>
           <div>

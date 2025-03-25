@@ -6,6 +6,7 @@ import { useCookies } from 'react-cookie';
 import ErrorPopup from '../components/ErrorPopup';
 import SuccessPopup from '../components/SuccessPopup';
 import { fetchData, postData } from '../services/apiService';
+import Logo from '/logo-rounded.png'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -92,6 +93,10 @@ const Login = () => {
       </div>
 
       <div className="px-4 pt-6 pb-4 space-y-6">
+        <div className='w-full flex justify-center'>
+        <img src={Logo} className='size-28 flex justify-center rounded-full border-4' />
+        </div>
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Mobile Number */}
           <div className="space-y-2">
