@@ -20,12 +20,14 @@ const Registration = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
+  const [isInviteCode, setIsInviteCode] = useState('')
 
   // Use useEffect to get the inviteCode from the URL query params
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const inviteCode = urlParams.get('inviteCode');
     if (inviteCode) {
+      setIsInviteCode(inviteCode)
       setFormData((prevData) => ({
         ...prevData,
         inviteCode: inviteCode, // Set the invite code in formData
@@ -159,7 +161,7 @@ const Registration = () => {
                     className="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-[2.133333vw] outline-none"
                     placeholder={`Enter your ${field}`}
                     required={field === 'inviteCode' ? false : true}
-                    disabled={loading || (field === 'inviteCode' && formData.inviteCode)}
+                    disabled={loading || isInviteCode}
                     maxLength={field === 'mobile' ? 10 : undefined}
                   />
                   {field === 'password' && (
