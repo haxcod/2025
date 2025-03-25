@@ -8,6 +8,7 @@ import DepositOrder from "../components/DepositOrder";
 import { fetchData } from "../services/apiService";
 import ProductBuyOrder from "../components/ProductBuyOrder";
 import ProductRevOrder from "../components/ProductRevOrder";
+import UserData from "../hooks/UserData";
 
 const TABS = {
   ACCOUNT: "Account",
@@ -16,6 +17,7 @@ const TABS = {
 };
 
 const FundRecord = () => {
+  const { userData } = UserData();
   const navigate = useNavigate();
   const [fundData, setFundData] = useState([]); // Stores all transactions
   const [filteredData, setFilteredData] = useState([]); // Stores filtered transactions
@@ -42,11 +44,10 @@ const FundRecord = () => {
   const getFundData = async () => {
     try {
       const response = await fetchData("/api/v1/transactions", {
-        params: { mobile: "7905321205" },
+        params: { mobile: userData.mobile },
       });
 
       if (response?.data?.transactions.length > 0) {
-        
         setFundData(response.data.transactions); // Store all data
       } else {
         setFundData([]);
@@ -97,7 +98,8 @@ const FundRecord = () => {
           default:
             return null; // Handle unknown types gracefully
         }
-      }).filter(Boolean);;
+      })
+      .filter(Boolean);
   };
 
   const renderTabButton = (label, type) => {

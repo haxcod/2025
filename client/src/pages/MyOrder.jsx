@@ -6,6 +6,7 @@ import emptyIcon from '../assets/no_data.png';
 import PurchasedProducts from '../components/PurchasedProducts';
 import ExpiredProducts from '../components/ExpiredProducts';
 import { fetchData, postData } from '../services/apiService';
+import UserData from '../hooks/UserData';
 
 const MyOrder = () => {
   const navigate = useNavigate();
@@ -14,13 +15,14 @@ const MyOrder = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [totalClaimed, setTotalClaimed] = useState(0)
+  const {userData} = UserData();
 
   // Fetch products data
   const getProductsData = async () => {
     setLoading(true);
     try {
       const  data  = await fetchData('/api/v1/my/product', {
-        params: { mobile: '7905321205' },
+        params: { mobile: userData.mobile },
       });
       console.log(data.data);
       

@@ -1,6 +1,6 @@
 import { RateReview } from '../components/RatingReview';
 
-const CommentSample = ({ utterance, score, image, mobile='7905321205' }) => {
+const CommentSample = ({ utterance, score, image, mobile }) => {
 
   const maskPhoneNumber = (fullNumber) => {
     // Extract the first three and last four digits

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ExplanationBankCard from '../components/ExplanationBankCard';
 import AddBankCash from '../components/AddBankCash';
 import AddBankUSDT from '../components/AddBankUSDT';
-import AccountTypeSelector from '../components/AccountTypeSelector';
+// import AccountTypeSelector from '../components/AccountTypeSelector';
 
 const BankCard = () => {
     const navigate = useNavigate();

@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { fetchData, postData } from '../services/apiService';
-import PaymentConfirmation from './PaymentConfirmation';
+import { postData } from '../services/apiService';
 import { useNavigate } from 'react-router-dom';
 
 const WithdrawCash = ({ bankData,balance }) => {
