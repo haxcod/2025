@@ -1,0 +1,51 @@
+[
+    {
+      "amount": "0",
+      "label": "This level of VIP requires a total investment amount of ",
+      "bg": "level-0.png",
+      "levelImg": "lv1.png"
+    },
+    {
+      "amount": "495",
+      "label": "This level of VIP requires a total investment amount of ",
+      "bg": "level-1.png",
+      "levelImg": "lv1.png"
+    },
+    {
+      "amount": "6,950",
+      "label": "This level of VIP requires a total investment amount of ",
+      "bg": "level-2.png",
+      "levelImg": "lv2.png"
+    },
+    {
+      "amount": "29,999",
+      "label": "This level of VIP requires a total investment amount of ",
+      "bg": "level-3.png",
+      "levelImg": "lv3.png"
+    },
+    {
+      "amount": "100,000",
+      "label": "This level of VIP requires a total investment amount of ",
+      "bg": "level-4.png",
+      "levelImg": "lv4.png"
+    },
+    {
+      "amount": "300,000",
+      "label": "This level of VIP requires a total investment amount of ",
+      "bg": "level-5.png",
+      "levelImg": "lv5.png"
+    },
+    {
+      "amount": "700,000",
+      "label": "This level of VIP requires a total investment amount of ",
+      "bg": "level-6.png",
+      "levelImg": "lv6.png"
+    },
+    {
+      "amount": "1,000,000",
+      "label": "This level of VIP requires a total investment amount of ",
+      "bg": "level-7.png",
+      "levelImg": "lv7.png"
+    }
+  ]
+  

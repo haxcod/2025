@@ -1,24 +1,28 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import BottomBar from '../components/BottomBar';
-import Product from '../components/Product';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BottomBar from "../components/BottomBar";
+import Product from "../components/Product";
 
 // Import icons
-import fundIcon1 from '../assets/fund_icon1.png';
-import fundIcon1Active from '../assets/fund_icon1_active.png';
-import fundIcon2 from '../assets/fund_icon2.png';
-import fundIcon2Active from '../assets/fund_icon2_active.png';
-import fundIcon3 from '../assets/fund_icon3.png';
-import fundIcon3Active from '../assets/fund_icon3_active.png';
-import fundIcon4 from '../assets/fund_icon4.png';
-import fundIcon4Active from '../assets/fund_icon4_active.png';
+import fundIcon1 from "../assets/fund_icon1.png";
+import fundIcon1Active from "../assets/fund_icon1_active.png";
+import fundIcon2 from "../assets/fund_icon2.png";
+import fundIcon2Active from "../assets/fund_icon2_active.png";
+import fundIcon3 from "../assets/fund_icon3.png";
+import fundIcon3Active from "../assets/fund_icon3_active.png";
+import fundIcon4 from "../assets/fund_icon4.png";
+import fundIcon4Active from "../assets/fund_icon4_active.png";
 
 // Import JSON data
-import productData from '../data/products.json';
+import productData from "../data/products.json";
+import UserData from "../hooks/UserData";
+import useTransactionStore from "../store/TransactionStore";
 
 const Products = () => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
+  const { userData } = UserData();
+  const {summary,fetchTransactions}=useTransactionStore();
 
   // Structure tabs using JSON data
   const productTabs = [
@@ -30,8 +34,14 @@ const Products = () => {
 
   const currentProducts = productTabs[current].data;
 
+  useEffect(()=>{
+    fetchTransactions(userData.mobile)
+  },[userData.mobile])
+
   const handleClick = (product) => {
-    navigate('/profile',{state:{product}});
+    
+    const productData ={product,mobile: userData.mobile,totalCredit:summary.totalDeposit}
+    navigate("/profile", { state: { productData } });
   };
 
   return (
@@ -51,7 +61,7 @@ const Products = () => {
               >
                 <div
                   className={`w-[15.466667vw] h-[15.466667vw] flex justify-center items-center rounded-[3.2vw] m-[0_auto] ${
-                    index === current ? 'bg-[#000]' : 'bg-[#bbeda9]'
+                    index === current ? "bg-[#000]" : "bg-[#bbeda9]"
                   }`}
                 >
                   <div className="w-[5.866667vw] h-auto">
@@ -75,11 +85,13 @@ const Products = () => {
               <Product
                 key={index}
                 {...product}
-                handleInvest={()=>handleClick(product)}
+                handleInvest={() => handleClick(product)}
               />
             ))
           ) : (
-            <p className="text-center p-4">No products available in this category.</p>
+            <p className="text-center p-4">
+              No products available in this category.
+            </p>
           )}
         </div>
       </div>

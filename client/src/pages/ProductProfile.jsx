@@ -7,7 +7,9 @@ import { format } from 'date-fns';
 const ProductProfile = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const product = state?.product || {};
+  
+  const {product,mobile,totalCredit} = state?.productData ?? { name: "Unknown", price: 0, description: "No details available" };
+
 
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -47,9 +49,15 @@ const ProductProfile = () => {
       alert("Please enter a valid quantity.");
       return;
     }
+    if (product.currentPrice > totalCredit) {
+      alert("Insufficient balance. Please recharge.");
+      return;
+    }
+
+
 
     const allData = {
-      mobile: '7905321205',
+      mobile: mobile,
       fundName: product.fundName || '',
       status: product.status || '',
       revenueDays: product.revenueDays || '',
@@ -59,11 +67,26 @@ const ProductProfile = () => {
       vip: product.vip || '',
       expireDate: expiryDate || ''
     };
+    const transactionData ={
+      mobile: '7905321205',
+      type:'buy',
+      amount:product.currentPrice,
+      description:product.fundName,
+      status:'completed'
+    }
     setLoading(true);
     setError('');
     
     try {
+      const transactionResponse  = await postData('/api/v1/transactions', transactionData);
+      console.log(transactionResponse);
+      
+      if (!transactionResponse || transactionResponse.status !== 201) {
+        throw new Error("Transaction creation failed.");
+      }
+    
       const { data, status } = await postData('/api/v1/my/product', allData);
+
       if (status === 201) {
         navigate(-1)
         // alert("Investment successfully recorded!");
@@ -145,7 +168,7 @@ const ProductProfile = () => {
             </div>
           </div>
         ))}
-        <p className="text-[#4ca335] text-[3.466667vw] mt-[1.333333vw]">Credit Available: ₹ 0</p>
+        <p className="text-[#4ca335] text-[3.466667vw] mt-[1.333333vw]">Credit Available: ₹ {totalCredit || 0}</p>
         <button
           className="w-full mt-[4.8vw] p-[0_4.266667vw] rounded-[2.133333vw] h-[12.8vw] text-[4.266667vw] text-white bg-[#4ca335] flex justify-center items-center"
           type="button"

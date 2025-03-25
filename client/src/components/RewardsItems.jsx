@@ -1,22 +1,20 @@
 import { useCallback, useEffect, useState } from 'react';
-import UserData from "../hooks/UserData";
 import { fetchData } from "../services/apiService";
 
-const RewardsItems = () => {
-  const data = UserData();
+const RewardsItems = ({userData}) => {
   const [activeUser, setActiveUser] = useState([]);
 
   const fetchInvitedUsers = useCallback(async () => {
     try {
       const response = await fetchData("api/v1/invites", {
-        params: { userId: data.userData._id },
+        params: { userId: userData._id },
       });
-
-      setActiveUser(response.data.activeUsers || []); // Ensure it's an array
+      
+      setActiveUser(response.data.activeUsers || 0); // Ensure it's an array
     } catch (error) {
       console.error("Failed to fetch invited users:", error);
     }
-  }, [data.userData._id]);
+  }, [userData._id]);
 
   useEffect(() => {
     fetchInvitedUsers();
@@ -50,6 +48,8 @@ const RewardsItems = () => {
               <p className="text-[#707070] text-[3.2vw]">Schedule</p>
               <p className="text-[3.2vw] text-[#4ca335]">
                 {currentInvites} / {reward.inviteCount}
+                {/* {console.log(activeUser)
+                } */}
               </p>
             </div>
 

@@ -31,8 +31,8 @@ const NewComment = () => {
       </div>
 
       <div className="rounded-[2.66667vw] bg-white p-[6.13333vw_4.4vw_3.73333vw] m-[0px_4vw_2.66667vw]">
-      <p className="text-[rgb(22, 24, 39)] text-[4.26667vw] mb-[3.33333vw]">Picture upload</p>
-      <div className="w-full box-border">
+      {/* <p className="text-[rgb(22, 24, 39)] text-[4.26667vw] mb-[3.33333vw]">Picture upload</p> */}
+      {/* <div className="w-full box-border">
         <div className="w-full flex flex-wrap">
           <div className="size-[25.0667vw] bg-[#f7f8fa] shadow-none flex justify-center items-center m-[0_2.666667vw_2.666667vw_0] cursor-pointer ">
             <input
@@ -55,7 +55,7 @@ const NewComment = () => {
             <div>0 / 9</div>
           </div>
         </div>
-      </div>
+      </div> */}
       <p className="text-[#161827] text-[4.26667vw] mb-[1.33333vw]">Score</p>
       <div className="flex items-center">
         <div className="h-[10.6667vw] flex items-center p-[0px_4.66667vw] rounded-[5.33333vw] bg-[#f0f0f0]">

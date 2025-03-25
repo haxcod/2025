@@ -1,10 +1,9 @@
 import React from 'react'
 import { IoMdNotificationsOutline } from "react-icons/io";
 import MaskedNumber from '../hooks/MaskedNumber';
-import UserData from '../hooks/UserData';
 
-const TopBar = () => {
-  const user = UserData();
+const TopBar = ({userData}) => {
+  
   return (
     <div className="h-[17.333333vw] flex items-center justify-between p-[0_6.4vw]">
     <div className="items-center flex">
@@ -15,10 +14,10 @@ const TopBar = () => {
       </div>
       <div className="ml-[3.2vw] text-[#242424]">
         <p className="text-[3.2vw]">
-          ID: {user.userData.id}
+          ID: {userData.id}
         </p>
         <p className="text-[4.8vw] mt-[.666667vw]">
-          <MaskedNumber number={user.userData ? user.userData.mobile : null}/>
+          <MaskedNumber number={userData ? userData.mobile : null}/>
         </p>
       </div>
     </div>

@@ -22,6 +22,8 @@ const MyOrder = () => {
       const  data  = await fetchData('/api/v1/my/product', {
         params: { mobile: '7905321205' },
       });
+      console.log(data.data);
+      
       // Calculate total claimed from the products data
       const totalClaimedAmount = data.data.reduce((total, product) => total + product.claimed, 0);
       setTotalClaimed(totalClaimedAmount);

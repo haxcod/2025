@@ -39,7 +39,7 @@ const BankCard = () => {
             ))}
           </div>
         </div> */}
-        <AccountTypeSelector isActive={isActive} setIsActive={setIsActive} />
+        {/* <AccountTypeSelector isActive={isActive} setIsActive={setIsActive} /> */}
         {isActive === 1 ? <AddBankCash /> : <AddBankUSDT />}
 
 

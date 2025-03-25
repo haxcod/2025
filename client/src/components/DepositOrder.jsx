@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 
 const DepositOrder = ({data}) => {
-   const { amount, createdAt } = data;
+   const { amount, createdAt,status } = data;
    const formattedDate = format(createdAt, 'dd-MM-yyyy HH:mm:ss');
 
 
@@ -29,7 +29,9 @@ const DepositOrder = ({data}) => {
         <div className='bg-[#ffb51a] rounded-full size-[3vw] flex justify-center items-center mr-[.9668vw]'>
           <BiTransferAlt className="size-[2.43333vw] text-white"/>
         </div>
-          Transfering
+        {status === 'pending' ? 'Transferring' : status || 'Transferring'}
+
+          {/* Transfering */}
         </div>
       </div>
     </div>

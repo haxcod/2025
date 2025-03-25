@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 
 const WithdrawOrder = ({ data }) => {
-  const { amount, createdAt } = data;
+  const { amount, createdAt,status  } = data;
   const formattedDate = format(createdAt, 'dd-MM-yyyy HH:mm:ss');
 
   // Calculate the fee and actual receipt (7% fee)
@@ -48,7 +48,7 @@ const WithdrawOrder = ({ data }) => {
             <div className="w-[3vw] h-[3vw] bg-[#ffb51a] rounded-full flex justify-center items-center mr-[0.97vw]">
               <BiTransferAlt className="text-white text-[2.43vw]" aria-label="Processing Icon" />
             </div>
-            Processing
+            {status === 'pending' ? 'Processing' : status || 'Processing'}
           </div>
         </div>
       </div>

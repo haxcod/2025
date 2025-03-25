@@ -4,7 +4,7 @@ import { fetchData, postData } from '../services/apiService';
 import PaymentConfirmation from './PaymentConfirmation';
 import { useNavigate } from 'react-router-dom';
 
-const WithdrawCash = ({ bankData }) => {
+const WithdrawCash = ({ bankData,balance }) => {
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,9 +18,24 @@ const WithdrawCash = ({ bankData }) => {
       setError('Please enter a valid withdrawal amount.');
       return;
     }
+    if (amount < 200) { 
+      setError('Minimum withdrawal amount is 200'); 
+      return; 
+    }
+    if (amount > balance) { 
+      setError('Insufficient balance for withdrawal.');
+      return;
+    }
+  
    
     // Prepare data for withdrawal
-    const allData = { amount: withdrawAmount, mobile: bankData.mobile, type: 'debit' };
+    const allData = {
+      amount: withdrawAmount,
+      mobile: bankData?.mobile,
+      type: "debit",
+      status:'completed',
+      description:'Withdraw'
+    };
     setLoading(true);
     try {
       const response = await postData('/api/v1/transactions',  allData );
@@ -29,7 +44,7 @@ const WithdrawCash = ({ bankData }) => {
       if (response.status === 201) {
         // alert(`Successfully withdrew ₹${withdrawAmount}`);
         setWithdrawAmount(''); // Clear the input field after successful withdrawal
-        navigate('/successful')
+        navigate('/successful', {state:{amount:withdrawAmount}})
       }
     } catch (error) {
       console.error('Error during withdrawal:', error);

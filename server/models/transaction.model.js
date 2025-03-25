@@ -4,27 +4,35 @@ const transactionSchema = new mongoose.Schema(
     {
         mobile: {
             type: String,
-            required: true,
+            required: [true, "Mobile number is required."],
             validate: {
                 validator: (v) => /^[6-9]\d{9}$/.test(v), // Validates Indian mobile numbers
                 message: (props) => `${props.value} is not a valid mobile number.`,
             },
         },
         amount: {
-            type: Number, // Changed to Number for monetary values
-            required: true,
-            min: [0, 'Amount cannot be negative.'], // Ensures a non-negative amount
+            type: Number,
+            required: [true, "Amount is required."],
+            min: [0, "Amount cannot be negative."],
         },
         type: {
             type: String,
-            required: true,
-            enum: ['credit', 'debit'], // Restricts to 'credit' or 'debit'
-            message: '{VALUE} is not a valid transaction type.',
+            required: [true, "Transaction type is required."],
+            enum: {
+                values: ['credit', 'debit', 'buy', 'revenue'],
+                message: "Transaction type must be 'credit', 'debit', 'buy', or 'revenue'.",
+            },
         },
-        description:{
+        description: {
             type: String,
-            required: true,
-        }
+            default: "", // Now optional
+            trim: true,
+        },
+        status: {
+            type: String,
+            enum: ['pending', 'completed', 'failed'],
+            default: 'pending',
+        },
     },
     {
         timestamps: true, // Automatically adds createdAt and updatedAt fields

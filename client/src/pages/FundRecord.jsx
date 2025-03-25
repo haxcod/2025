@@ -6,6 +6,8 @@ import emptyIcon from "../assets/no_data.png";
 import WithdrawOrder from "../components/WithdrawOrder";
 import DepositOrder from "../components/DepositOrder";
 import { fetchData } from "../services/apiService";
+import ProductBuyOrder from "../components/ProductBuyOrder";
+import ProductRevOrder from "../components/ProductRevOrder";
 
 const TABS = {
   ACCOUNT: "Account",
@@ -82,14 +84,20 @@ const FundRecord = () => {
     }
 
     return filteredData
-      .slice()
-      .reverse()
       .map((item, index) => {
-        if (item.type === "debit") {
-          return <WithdrawOrder key={index} data={item} />;
+        switch (item.type) {
+          case "debit":
+            return <WithdrawOrder key={index} data={item} />;
+          case "credit":
+            return <DepositOrder key={index} data={item} />;
+          case "buy":
+            return <ProductBuyOrder key={index} data={item} />;
+          case "revenue":
+            return <ProductRevOrder key={index} data={item} />;
+          default:
+            return null; // Handle unknown types gracefully
         }
-        return <DepositOrder key={index} data={item} />;
-      });
+      }).filter(Boolean);;
   };
 
   const renderTabButton = (label, type) => {

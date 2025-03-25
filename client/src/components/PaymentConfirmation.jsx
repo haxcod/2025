@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const PaymentConfirmation = () => {
   const [countdown, setCountdown] = useState(3);
   const [animationStage, setAnimationStage] = useState(0);
   const [confetti, setConfetti] = useState([]);
   const navigate = useNavigate();
+  const { state } = useLocation();
   // Theme color: #4ca335
   const themeColor = '#4ca335';
   const lighterThemeColor = '#65c94e';
@@ -132,7 +133,7 @@ const PaymentConfirmation = () => {
         <div className={`text-4xl md:text-6xl font-bold mb-6 transition-all duration-500 delay-100 ${
           animationStage >= 3 ? 'opacity-100 transform-none' : 'opacity-0 scale-50'
         }`}>
-          ₹1,299
+          ₹{state.amount}
         </div>
         
         {/* Animated progress bar */}
