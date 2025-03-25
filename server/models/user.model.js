@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
         return uuidv4().slice(0, 6).toUpperCase();
       },
     },
+    fingerprint: {
+      type: String,
+      unique: true,
+    },
     invitedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     password: {
       type: String,

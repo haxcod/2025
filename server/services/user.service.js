@@ -2,10 +2,10 @@ const userModal = require('../models/user.model');
 const rechargeModal = require('../models/transaction.model')
 const bcrypt = require('bcrypt');
 
-const createUser = async (name, email, mobile, password, inviteCode) => {
+const createUser = async (name, email, mobile, password, inviteCode,fingerprint) => {
   try {
     // Input validation
-    if (!name || !email || !mobile || !password) {
+    if (!name || !email || !mobile || !password ) {
       throw new Error('All fields are required: name, email, mobile, and password');
     }
 
@@ -13,6 +13,10 @@ const createUser = async (name, email, mobile, password, inviteCode) => {
     const existingUser = await userModal.findOne({ $or: [{ email }, { mobile }] });
     if (existingUser) {
       throw new Error('Email or mobile already in use.');
+    }
+    const existingFingerprint = await userModal.findOne({ fingerprint });
+    if (existingFingerprint) {
+      throw new Error("This device is already registered with another account.");
     }
 
     let inviter = null;
@@ -29,6 +33,7 @@ const createUser = async (name, email, mobile, password, inviteCode) => {
       email,
       mobile,
       password,
+      fingerprint,
       invitedBy: inviter ? inviter._id : null,
     });
     return user;

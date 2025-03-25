@@ -11,13 +11,13 @@ const validateFields = (fields) => {
 };
 
 const createUser = async (req, res) => {
-  const { name, email, mobile, password,inviteCode } = req.body;
+  const { name, email, mobile, password,inviteCode,fingerprint } = req.body;
 
   try {
     // Validate required fields
     validateFields({ name, email, mobile, password });
     // Call service to create the user
-    const user = await userService.createUser(name, email, mobile, password,inviteCode);
+    const user = await userService.createUser(name, email, mobile, password,inviteCode,fingerprint);
     res.status(201).json({
       status: 201,
       message: 'User registered successfully',
