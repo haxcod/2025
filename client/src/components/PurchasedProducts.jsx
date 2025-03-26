@@ -35,7 +35,7 @@ const PurchasedProducts = ({ product, claim, setClaim }) => {
     const result = isCheckedIsClaimed(product.createdAt, product.updatedAt);
     setIsClaimed(result);
   }, [product.createdAt, product.updatedAt]);
-
+  
   // console.log(product);
 
   const handleIsClaimed = async (productId, amount) => {
@@ -48,7 +48,7 @@ const PurchasedProducts = ({ product, claim, setClaim }) => {
         throw new Error("A valid amount is required.");
       const transactionData = {
         mobile: product?.mobile,
-        amount: product?.currentPrice,
+        amount: product?.dailyEarnings,
         status: "completed",
         type: "revenue",
         description: "Revenue",

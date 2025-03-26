@@ -88,8 +88,6 @@ const DepositCash = ({ mobileNumber }) => {
       alert("An error occurred while verifying the payment.");
     }
   };
-  
-
 
   const createTransaction = async (status) => {
     try {

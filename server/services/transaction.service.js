@@ -34,14 +34,12 @@ const transactionDataGet = async (mobile) => {
             throw new Error("Mobile number is required.");
         }
 
-        // Get today's date range (start of today to end of today)
         const startOfToday = new Date();
-        startOfToday.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
+        startOfToday.setHours(0, 0, 0, 0);
 
         const endOfToday = new Date();
-        endOfToday.setHours(23, 59, 59, 999); // Set time to 23:59:59.999
+        endOfToday.setHours(23, 59, 59, 999);
 
-        // Perform aggregation for transactions, summary, and today’s revenue
         const result = await transactionModel.aggregate([
             { $match: { mobile } },
             {
@@ -52,19 +50,41 @@ const transactionDataGet = async (mobile) => {
                             $group: {
                                 _id: null,
                                 totalCredit: {
-                                    $sum: { $cond: [{ $eq: ["$type", "credit"] }, "$amount", 0] }
+                                    $sum: {
+                                        $cond: [
+                                            { $and: [{ $eq: ["$type", "credit"] }, { $eq: ["$status", "completed"] }] },
+                                            "$amount",
+                                            0
+                                        ]
+                                    }
                                 },
                                 totalDebit: {
-                                    $sum: { $cond: [{ $eq: ["$type", "debit"] }, "$amount", 0] }
+                                    $sum: {
+                                        $cond: [
+                                            { $and: [{ $eq: ["$type", "debit"] }, { $ne: ["$status", "failed"] }] },
+                                            "$amount",
+                                            0
+                                        ]
+                                    }
                                 },
                                 totalDeposit: {
-                                    $sum: { $cond: [{ $eq: ["$type", "credit"] }, "$amount", 0] }
+                                    $sum: {
+                                        $cond: [
+                                            { $and: [{ $eq: ["$type", "credit"] }, { $eq: ["$status", "completed"] }] },
+                                            "$amount",
+                                            0
+                                        ]
+                                    }
                                 },
                                 totalBuy: {
-                                    $sum: { $cond: [{ $eq: ["$type", "buy"] }, "$amount", 0] }
+                                    $sum: {
+                                        $cond: [{ $eq: ["$type", "buy"] }, "$amount", 0]
+                                    }
                                 },
                                 totalRevenue: {
-                                    $sum: { $cond: [{ $eq: ["$type", "revenue"] }, "$amount", 0] }
+                                    $sum: {
+                                        $cond: [{ $eq: ["$type", "revenue"] }, "$amount", 0]
+                                    }
                                 }
                             }
                         },
@@ -81,7 +101,12 @@ const transactionDataGet = async (mobile) => {
                         }
                     ],
                     todayRevenue: [
-                        { $match: { type: "revenue", createdAt: { $gte: startOfToday, $lte: endOfToday } } },
+                        {
+                            $match: {
+                                type: "revenue",
+                                createdAt: { $gte: startOfToday, $lte: endOfToday }
+                            }
+                        },
                         {
                             $group: {
                                 _id: null,
@@ -94,7 +119,6 @@ const transactionDataGet = async (mobile) => {
             }
         ]);
 
-        // Extract transactions, summary, and today's revenue
         const transactions = result[0].transactions;
         const summary = result[0].summary.length > 0
             ? result[0].summary[0]
@@ -109,6 +133,7 @@ const transactionDataGet = async (mobile) => {
         throw err;
     }
 };
+
 
 const generateOrderId = () => {
     return crypto.randomUUID().replace(/-/g, '').substr(0, 12);
@@ -163,5 +188,6 @@ const rechargeCashFreeVerify = async (orderId) => {
         console.error(`Error in payment verification for orderId ${orderId}:`, err.message);
         throw new Error("Failed to verify payment. Please try again later.");
     }
+}
 
 module.exports = { transactionData, transactionDataGet, rechargeCashFreePayment,rechargeCashFreeVerify };
