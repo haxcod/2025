@@ -156,14 +156,12 @@ const rechargeCashFreeVerify = async (orderId) => {
     try {
         console.log(`Verifying payment for orderId: ${orderId}`);
 
-        const data = await Cashfree.PGOrderFetchPayments("2023-08-01", orderId);
+        const data = await Cashfree.PGFetchOrder("2023-08-01", orderId);
 
         return data;
     } catch (err) {
         console.error(`Error in payment verification for orderId ${orderId}:`, err.message);
         throw new Error("Failed to verify payment. Please try again later.");
     }
-};
-
 
 module.exports = { transactionData, transactionDataGet, rechargeCashFreePayment,rechargeCashFreeVerify };

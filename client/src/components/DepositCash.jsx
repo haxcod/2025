@@ -63,22 +63,33 @@ const DepositCash = ({ mobileNumber }) => {
       return null;
     }
   };
-
   const verifyPayment = async (orderId) => {
     try {
-      const res = await postData("/api/v1/verify", { orderId });
+      let res = await postData("/api/v1/verify", { orderId });
+  
       if (res?.data) {
         console.log(res);
         console.log(res.data);
-        
-        createTransaction("completed");
-        alert("Payment verified successfully!");
+  
+        if (res.data.payment_status === "SUCCESS") {
+          createTransaction("completed");
+          alert("Payment verified successfully!");
+        } else {
+          createTransaction("failed");
+          alert("Payment failed or canceled.");
+        }
+      } else {
+        createTransaction("failed");
+        alert("Payment verification failed. Please try again.");
       }
     } catch (error) {
-      console.error("Error in payment verification:", error);
-      setError("Payment verification failed.");
+      console.error("Error verifying payment:", error);
+      createTransaction("failed");
+      alert("An error occurred while verifying the payment.");
     }
   };
+  
+
 
   const createTransaction = async (status) => {
     try {
