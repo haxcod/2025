@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cashfreepayments/cashfree-js": "^1.0.5",
     "@fingerprintjs/fingerprintjs": "^4.6.1",
     "axios": "^1.7.7",
     "create-puzzle": "^3.0.2",

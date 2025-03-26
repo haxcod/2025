@@ -1,5 +1,11 @@
 const transactionModel = require('../models/transaction.model');
 const crypto = require("crypto")
+const { Cashfree } = require("cashfree-pg");
+
+
+Cashfree.XClientId = process.env.CLIENT_ID
+Cashfree.XClientSecret = process.env.CLIENT_SECRET
+Cashfree.XEnvironment = Cashfree.Environment.SANDBOX
 
 const transactionData = async (mobile, amount, type, description) => {
     try {
@@ -8,12 +14,12 @@ const transactionData = async (mobile, amount, type, description) => {
 
             throw new Error("All fields (mobile, amount, type,description) are required.");
         }
-        if (!['credit', 'debit','buy','revenue'].includes(type)) {
+        if (!['credit', 'debit', 'buy', 'revenue'].includes(type)) {
             throw new Error("Invalid transaction type. Use 'credit' or 'debit'.");
         }
 
         // Create a new transaction record
-        const transaction = await transactionModel.create({ mobile, amount, type,description });
+        const transaction = await transactionModel.create({ mobile, amount, type, description });
 
         return transaction;
     } catch (err) {
@@ -90,8 +96,8 @@ const transactionDataGet = async (mobile) => {
 
         // Extract transactions, summary, and today's revenue
         const transactions = result[0].transactions;
-        const summary = result[0].summary.length > 0 
-            ? result[0].summary[0] 
+        const summary = result[0].summary.length > 0
+            ? result[0].summary[0]
             : { totalCredit: 0, totalDebit: 0, totalBalance: 0, totalDeposit: 0, withdrawBalance: 0, totalRevenue: 0 };
 
         const todayRevenue = result[0].todayRevenue.length > 0 ? result[0].todayRevenue[0].todayRevenue : 0;
@@ -104,13 +110,53 @@ const transactionDataGet = async (mobile) => {
     }
 };
 
+const generateOrderId = () => {
+    return crypto.randomUUID().replace(/-/g, '').substr(0, 12);
+ };
+ const rechargeCashFreePayment = async (amount, userMobile, userName, userEmail, userId) => {
+    try {
+        const orderId = generateOrderId();
+        // console.log(am);
+        
+        const request  = {
+            "order_amount":Number(amount),
+            "order_currency": "INR",
+            "order_id": orderId,
+            "customer_details": {
+                customer_id: String(userId),   // Ensure it's a string
+                customer_name: String(userName),
+                customer_email: String(userEmail),
+                customer_phone: String(userMobile) // Ensure it's a string
+            },   
+        };
+        // var request = {
+        //     "order_amount": "1",
+        //     "order_currency": "INR",
+        //     "customer_details": {
+        //       "customer_id": "node_sdk_test",
+        //       "customer_name": "",
+        //       "customer_email": "example@gmail.com",
+        //       "customer_phone": "9999999999"
+        //     },
+        //     "order_meta": {
+        //       "return_url": "https://test.cashfree.com/pgappsdemos/return.php?order_id=order_123"
+        //     },
+        //     "order_note": ""
+        //   }
 
+        const data = await Cashfree.PGCreateOrder("2023-08-01", request);
+        return data;
+    } catch (err) {
+        console.log('Error:', err);
+        throw err;
+    }
+};
 
-const rechargePayU = async (email, firstname, mobile, amount) => {
+const rechargeCashFreeVerify = async (email, firstname, mobile, amount) => {
     const key = process.env.PAYU_KEY;
     const salt = process.env.PAYU_SALT;
     const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-    
+
     if (!key || !salt) {
         throw new Error("Missing PayU key or salt in environment variables");
     }
@@ -145,4 +191,4 @@ const rechargePayU = async (email, firstname, mobile, amount) => {
     }
 };
 
-module.exports = { transactionData, transactionDataGet, rechargePayU };
+module.exports = { transactionData, transactionDataGet, rechargeCashFreePayment };

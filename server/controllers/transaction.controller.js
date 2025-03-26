@@ -1,11 +1,11 @@
 const transactionService = require('../services/transaction.service');
 
 const createTransaction = async (req, res) => {
-    const { mobile, amount, type,description } = req.body;
-    
+    const { mobile, amount, type, description } = req.body;
+
     // Validate input
-    if (!mobile || !amount || !type|| !description) {
-        
+    if (!mobile || !amount || !type || !description) {
+
         return res.status(400).json({
             status: 400,
             message: "All fields (mobile, amount, type,description) are required.",
@@ -14,7 +14,7 @@ const createTransaction = async (req, res) => {
 
     try {
         // Call the service to create the transaction
-        const transaction = await transactionService.transactionData(mobile, amount, type,description);
+        const transaction = await transactionService.transactionData(mobile, amount, type, description);
         return res.status(201).json({
             status: 201,
             message: "Transaction created successfully.",
@@ -57,15 +57,16 @@ const getTransactions = async (req, res) => {
     }
 };
 
-const rechargePayU = async (req, res) => {
+const rechargeCashFreePayment = async (req, res) => {
     try {
-        const { firstname, email, mobile, amount } = req.body;
+        const { userId, userName, userEmail, userMobile, amount } = req.body;
 
         // Validate required fields
-        if (!firstname || !email || !mobile || !amount) {
+        if (!userName || !userEmail || !userMobile || !amount) {
             return res.status(400).json({
                 status: 400,
                 message: "Missing required fields: firstname, email, mobile, amount",
+                error: "Validation Error",
             });
         }
 
@@ -74,26 +75,28 @@ const rechargePayU = async (req, res) => {
             return res.status(400).json({
                 status: 400,
                 message: "Invalid amount. It must be a positive number.",
+                error: "Validation Error",
             });
         }
 
         // Call service function
-        const data = await transactionService.rechargePayU({ firstname, email, mobile, amount });
+        const responseData = await transactionService.rechargeCashFreePayment(amount, userMobile, userName, userEmail, userId);
 
         return res.json({
             status: 200,
             message: "Transaction initiated successfully",
-            data,
+            data: responseData?.data || responseData,
         });
 
     } catch (err) {
-        console.error("Error in rechargePayU:", err);
+        console.error("Error in rechargeCashFreePayment:", err);
         return res.status(500).json({
             status: 500,
             message: err.message || "Internal server error",
+            error: err,
         });
     }
 };
 
 
-module.exports = { createTransaction, getTransactions };
+module.exports = { createTransaction, getTransactions, rechargeCashFreePayment };

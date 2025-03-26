@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { TbDiamondFilled } from "react-icons/tb";
 import { postData } from "../services/apiService";
+import UserData from "../hooks/UserData";
+import { load } from "@cashfreepayments/cashfree-js";
 
 const DepositCash = ({ mobileNumber }) => {
   const [depositAmount, setDepositAmount] = useState("");
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [orderId, setOrderId] = useState("")
+  let cashfree;
+
+  const { userData } = UserData();
 
   const handleQuickAmountClick = (amount) => {
     setDepositAmount(amount);
@@ -20,6 +26,42 @@ const DepositCash = ({ mobileNumber }) => {
     setDepositAmount(value);
     setSelectedAmount(null);
     setError("");
+  };
+
+
+  let insitialzeSDK = async function () {
+
+    cashfree = await load({
+      mode: "production",
+    })
+  }
+  insitialzeSDK()
+
+
+
+  const getSessionId = async (amount) => {
+    try {
+      const data = {
+        userName: userData.name,
+        userMobile: userData.mobile,
+        userId: userData.id,
+        userEmail: userData.email,
+        amount,
+      };
+      console.log(data);
+
+      const res = await postData("/api/v1/payment", data);
+      if (res.data && res.data.payment_session_id) {
+        console.log(res.data);
+        // console.log(res.payment_session_id);
+        // console.log(res.data.payment_session_id);
+        
+        setOrderId(res.data.order_id)
+        return res.data.payment_session_id
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleDeposit = async () => {
@@ -39,21 +81,29 @@ const DepositCash = ({ mobileNumber }) => {
       amount: depositAmount,
       mobile: mobileNumber,
       type: "credit",
-      description:'Deposit'
+      description: "Deposit",
     };
 
     setLoading(true);
     setError("");
 
     try {
-      const response = await postData("/api/v1/transactions", allData);
-
-      if (response.status === 201) {
-        alert(`Deposited ₹${depositAmount} successfully!`);
-        setDepositAmount("");
-        setSelectedAmount(null);
-        setError("");
+      const sessionId = await getSessionId(depositAmount);
+      let checkoutOptions = {
+        paymentSessionId : sessionId,
+        redirectTarget:"_modal",
       }
+      await cashfree.checkout(checkoutOptions);
+      console.log("payment initialized")
+      
+      // const response = await postData("/api/v1/transactions", allData);
+
+      // if (response.status === 201) {
+      //   alert(`Deposited ₹${depositAmount} successfully!`);
+      //   setDepositAmount("");
+      //   setSelectedAmount(null);
+      //   setError("");
+      // }
     } catch (error) {
       console.error("Error during deposit:", error);
       setError("There was an error processing your deposit. Please try again.");
