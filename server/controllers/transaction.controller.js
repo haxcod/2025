@@ -100,27 +100,36 @@ const rechargeCashFreePayment = async (req, res) => {
 
 const rechargeCashFreeVerify = async (req, res) => {
     try {
-        let {
-            orderId
-        } = req.body;
+        const { orderId } = req.body;
+
+        if (!orderId) {
+            return res.status(400).json({
+                status: 400,
+                message: "Missing required field: orderId",
+            });
+        }
+
+        console.log(`Verifying transaction with orderId: ${orderId}`);
+
         // Call service function
         const responseData = await transactionService.rechargeCashFreeVerify(orderId);
 
-        return res.json({
+        return res.status(200).json({
             status: 200,
-            message: "Transaction verify successfully",
+            message: "Transaction verified successfully",
             data: responseData?.data || responseData,
         });
 
     } catch (err) {
-        console.error("Error in rechargeCashFreePayment:", err);
+        console.error(`Error in rechargeCashFreeVerify for orderId ${req.body?.orderId || "unknown"}:`, err);
+
         return res.status(500).json({
             status: 500,
             message: err.message || "Internal server error",
-            error: err,
         });
     }
 };
+
 
 
 module.exports = { createTransaction, getTransactions, rechargeCashFreePayment, rechargeCashFreeVerify };
