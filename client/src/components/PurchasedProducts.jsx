@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { fetchData, postData, updateData } from "../services/apiService";
+import { postData, updateData } from "../services/apiService";
 import Popup from "./SuccessPopup";
 
 const PurchasedProducts = ({ product, claim, setClaim }) => {
@@ -35,7 +35,7 @@ const PurchasedProducts = ({ product, claim, setClaim }) => {
     const result = isCheckedIsClaimed(product.createdAt, product.updatedAt);
     setIsClaimed(result);
   }, [product.createdAt, product.updatedAt]);
-  
+
   // console.log(product);
 
   const handleIsClaimed = async (productId, amount) => {
