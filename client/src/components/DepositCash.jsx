@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { TbDiamondFilled } from "react-icons/tb";
 import { postData } from "../services/apiService";
 import UserData from "../hooks/UserData";
@@ -9,10 +9,21 @@ const DepositCash = ({ mobileNumber }) => {
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [orderId, setOrderId] = useState("")
-  let cashfree;
-
   const { userData } = UserData();
+  const cashfreeRef = useRef(null);
+  // let cashfree;
+
+  useEffect(() => {
+    const initializeSDK = async () => {
+      if (!cashfreeRef.current) {
+        cashfreeRef.current = await load({
+          mode: "production",
+        });
+      }
+    };
+    initializeSDK();
+  }, []); // Run only once on mount
+
 
   const handleQuickAmountClick = (amount) => {
     setDepositAmount(amount);
@@ -22,22 +33,11 @@ const DepositCash = ({ mobileNumber }) => {
 
   const handleInputChange = (e) => {
     const value = e.target.value;
-    if (!/^\d*$/.test(value)) return; // Allow only numeric input
+    if (!/^\d*$/.test(value)) return;
     setDepositAmount(value);
     setSelectedAmount(null);
     setError("");
   };
-
-
-  let insitialzeSDK = async function () {
-
-    cashfree = await load({
-      mode: "production",
-    })
-  }
-  insitialzeSDK()
-
-
 
   const getSessionId = async (amount) => {
     try {
@@ -48,62 +48,83 @@ const DepositCash = ({ mobileNumber }) => {
         userEmail: userData.email,
         amount,
       };
-      console.log(data);
 
       const res = await postData("/api/v1/payment", data);
+
       if (res.data && res.data.payment_session_id) {
-        console.log(res.data);
-        // console.log(res.payment_session_id);
-        // console.log(res.data.payment_session_id);
-        
-        setOrderId(res.data.order_id)
-        return res.data.payment_session_id
+        return { sessionId: res.data.payment_session_id, orderId: res.data.order_id };
+      } else {
+        setError("Failed to initiate payment. Please try again.");
+        return null;
       }
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching session ID:", err);
+      setError("There was an error processing your request.");
+      return null;
+    }
+  };
+
+  const verifyPayment = async (orderId) => {
+    try {
+      const res = await postData("/api/v1/verify", { orderId });
+      if (res?.data) {
+        createTransaction("completed");
+        alert("Payment verified successfully!");
+      }
+    } catch (error) {
+      console.error("Error in payment verification:", error);
+      setError("Payment verification failed.");
+    }
+  };
+
+  const createTransaction = async (status) => {
+    try {
+      const allData = {
+        amount: depositAmount,
+        mobile: mobileNumber,
+        type: "credit",
+        description: "Deposit",
+        status,
+      };
+
+      const response = await postData("/api/v1/transactions", allData);
+
+      if (response.status === 201) {
+        alert(`Deposited ₹${depositAmount} successfully!`);
+        setDepositAmount("");
+        setSelectedAmount(null);
+        setError("");
+      }
+    } catch (error) {
+      console.error("Error creating transaction:", error);
+      setError("Transaction failed. Please try again.");
     }
   };
 
   const handleDeposit = async () => {
-    if (
-      !depositAmount ||
-      isNaN(depositAmount) ||
-      depositAmount < 200 ||
-      depositAmount > 100000
-    ) {
-      setError(
-        "Please enter a valid deposit amount between ₹200 and ₹100,000."
-      );
+    if (!depositAmount || isNaN(depositAmount) || depositAmount < 200 || depositAmount > 100000) {
+      setError("Please enter a valid deposit amount between ₹200 and ₹100,000.");
       return;
     }
-
-    const allData = {
-      amount: depositAmount,
-      mobile: mobileNumber,
-      type: "credit",
-      description: "Deposit",
-    };
 
     setLoading(true);
     setError("");
 
     try {
-      const sessionId = await getSessionId(depositAmount);
-      let checkoutOptions = {
-        paymentSessionId : sessionId,
-        redirectTarget:"_modal",
-      }
-      await cashfree.checkout(checkoutOptions);
-      console.log("payment initialized")
-      
-      // const response = await postData("/api/v1/transactions", allData);
+      const sessionData = await getSessionId(depositAmount);
+      if (!sessionData) return;
 
-      // if (response.status === 201) {
-      //   alert(`Deposited ₹${depositAmount} successfully!`);
-      //   setDepositAmount("");
-      //   setSelectedAmount(null);
-      //   setError("");
-      // }
+      const { sessionId, orderId } = sessionData;
+
+      let checkoutOptions = {
+        paymentSessionId: sessionId,
+        redirectTarget: "_modal",
+      };
+
+      await cashfreeRef.current.checkout(checkoutOptions);
+      console.log("Payment initialized");
+
+      verifyPayment(orderId);
     } catch (error) {
       console.error("Error during deposit:", error);
       setError("There was an error processing your deposit. Please try again.");
@@ -116,18 +137,14 @@ const DepositCash = ({ mobileNumber }) => {
     <div className="depositCash">
       {/* Quick Amount Selection */}
       <div className="p-[4vw_2.666667vw_0] rounded-[2.666667vw] bg-white mb-[2.666667vw]">
-        <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">
-          Quick amount
-        </p>
+        <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">Quick amount</p>
         <div className="flex flex-wrap justify-between">
           {[1000, 3000, 5000, 10000, 30000, 50000].map((amount) => (
             <div
               key={amount}
               onClick={() => handleQuickAmountClick(amount)}
               className={`flex justify-center items-center w-[26.666667vw] h-[9.066667vw] ${
-                selectedAmount === amount
-                  ? "bg-[#4ca335] text-white"
-                  : "bg-white text-[#4ca335]"
+                selectedAmount === amount ? "bg-[#4ca335] text-white" : "bg-white text-[#4ca335]"
               } border-[.266667vw] border-[#4ca335] rounded-[13.333333vw] mb-[2.666667vw] cursor-pointer`}
             >
               ₹{amount.toLocaleString()}
@@ -138,13 +155,9 @@ const DepositCash = ({ mobileNumber }) => {
 
       {/* Deposit Amount Input */}
       <div className="p-[4vw_2.666667vw_2.666667vw] rounded-[2.666667vw] bg-white mb-[2.666667vw]">
-        <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">
-          Deposit amount
-        </p>
+        <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">Deposit amount</p>
         <div className="border border-[#d9d9d9] rounded-[2.133333vw] h-[12.8vw] flex items-center w-full p-[2.666667vw_4.266667vw] overflow-hidden text-[#323233] text-[3.733333vw] bg-white">
-          <span className="text-[3.733333vw] text-[#4ca335] mr-[1.333333vw]">
-            ₹
-          </span>
+          <span className="text-[3.733333vw] text-[#4ca335] mr-[1.333333vw]">₹</span>
           <input
             type="tel"
             inputMode="numeric"
@@ -155,27 +168,7 @@ const DepositCash = ({ mobileNumber }) => {
             disabled={loading}
           />
         </div>
-        {error && (
-          <p className="text-red-500 text-[3.733333vw] mt-[1vw]">{error}</p>
-        )}
-      </div>
-
-      {/* Deposit Channel Section */}
-      <div className="p-[4vw_2.666667vw_2.666667vw] rounded-[2.666667vw] bg-white mb-[2.666667vw]">
-        <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">
-          Deposit Channel
-        </p>
-        <div className="border-[.533333vw] border-[#4ca335] flex justify-between items-center p-[4vw] rounded-[3.2vw] min-h-[18.933333vw]">
-          <div>
-            <p className="text-[#24223a] text-[4.266667vw]">
-              Payment Gateway M
-            </p>
-            <p className="text-[#343434] text-[3.733333vw] mt-[2vw]">
-              ₹200~₹100,000
-            </p>
-          </div>
-          <TbDiamondFilled fontSize={"5.466667vw"} color="#4CA335" />
-        </div>
+        {error && <p className="text-red-500 text-[3.733333vw] mt-[1vw]">{error}</p>}
       </div>
 
       {/* Deposit Button */}
@@ -187,12 +180,7 @@ const DepositCash = ({ mobileNumber }) => {
         } w-full outline-none`}
         type="button"
         onClick={handleDeposit}
-        disabled={
-          !depositAmount ||
-          depositAmount < 200 ||
-          depositAmount > 100000 ||
-          loading
-        }
+        disabled={!depositAmount || depositAmount < 200 || depositAmount > 100000 || loading}
       >
         {loading ? "Processing..." : "To Deposit"}
       </button>

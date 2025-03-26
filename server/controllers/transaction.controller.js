@@ -98,5 +98,29 @@ const rechargeCashFreePayment = async (req, res) => {
     }
 };
 
+const rechargeCashFreeVerify = async (req, res) => {
+    try {
+        let {
+            orderId
+        } = req.body;
+        // Call service function
+        const responseData = await transactionService.rechargeCashFreeVerify(orderId);
 
-module.exports = { createTransaction, getTransactions, rechargeCashFreePayment };
+        return res.json({
+            status: 200,
+            message: "Transaction verify successfully",
+            data: responseData?.data || responseData,
+        });
+
+    } catch (err) {
+        console.error("Error in rechargeCashFreePayment:", err);
+        return res.status(500).json({
+            status: 500,
+            message: err.message || "Internal server error",
+            error: err,
+        });
+    }
+};
+
+
+module.exports = { createTransaction, getTransactions, rechargeCashFreePayment, rechargeCashFreeVerify };

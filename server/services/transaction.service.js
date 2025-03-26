@@ -152,43 +152,15 @@ const generateOrderId = () => {
     }
 };
 
-const rechargeCashFreeVerify = async (email, firstname, mobile, amount) => {
-    const key = process.env.PAYU_KEY;
-    const salt = process.env.PAYU_SALT;
-    const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-
-    if (!key || !salt) {
-        throw new Error("Missing PayU key or salt in environment variables");
-    }
-
-    const transaction_id = 'PAYU_' + Date.now() + '_' + crypto.randomBytes(4).toString('hex');
-    const txnid = transaction_id;
-    const productinfo = 'RECHARGE_PAYU';
+const rechargeCashFreeVerify = async (orderId) => {
 
     try {
-        const hashString = `${key}|${txnid}|${amount}|${productinfo}|${firstname}|${email}|||||||||||${salt}`;
-        const hash = crypto.createHash('sha512').update(hashString).digest('hex');
-
-        const BASE_URL = process.env.BASE_URL || 'http://localhost:4000';
-        const data = await payuClient.paymentInitiate({
-            isAmountFilledByCustomer: false,
-            amount,
-            currency: 'INR',
-            firstname,
-            email,
-            phone: mobile,
-            txnid,
-            productinfo,
-            surl: `${BASE_URL}/api/success/${txnid}`,
-            furl: `${BASE_URL}/api/failure/${txnid}`,
-            hash
-        });
-
+       const data = Cashfree.PGOrderFetchPayments("2023-08-01", orderId)
         return data;
     } catch (err) {
-        console.error("Error in PayU payment initiation:", err);
+        console.error("Error in payment verification:", err);
         throw err;
     }
 };
 
-module.exports = { transactionData, transactionDataGet, rechargeCashFreePayment };
+module.exports = { transactionData, transactionDataGet, rechargeCashFreePayment,rechargeCashFreeVerify };
