@@ -68,6 +68,9 @@ const DepositCash = ({ mobileNumber }) => {
     try {
       const res = await postData("/api/v1/verify", { orderId });
       if (res?.data) {
+        console.log(res);
+        console.log(res.data);
+        
         createTransaction("completed");
         alert("Payment verified successfully!");
       }
