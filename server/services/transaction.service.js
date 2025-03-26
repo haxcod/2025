@@ -5,7 +5,7 @@ const { Cashfree } = require("cashfree-pg");
 
 Cashfree.XClientId = process.env.CLIENT_ID
 Cashfree.XClientSecret = process.env.CLIENT_SECRET
-Cashfree.XEnvironment = Cashfree.Environment.SANDBOX
+Cashfree.XEnvironment = Cashfree.Environment.PRODUCTION
 
 const transactionData = async (mobile, amount, type, description) => {
     try {
