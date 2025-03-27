@@ -5,7 +5,7 @@ const CommentSample = ({ utterance, score, image, mobile }) => {
   const maskPhoneNumber = (fullNumber) => {
     // Extract the first three and last four digits
     const firstPart = fullNumber.slice(0, 3);
-    const lastPart = fullNumber.slice(-4);
+    const lastPart = fullNumber.slice(-3);
     const maskedNumber = `${firstPart}****${lastPart}`;
 
     return maskedNumber;
