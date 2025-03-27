@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
 import { postData, updateData } from "../services/apiService";
 import Popup from "./SuccessPopup";
@@ -11,30 +11,28 @@ const PurchasedProducts = ({ product, claim, setClaim }) => {
   const [popupTimeout, setPopupTimeout] = useState(null);
 
   // ✅ Define isCheckedIsClaimed before useEffect
-  const isCheckedIsClaimed = (createdAt, updatedAt) => {
-    const createdDate = new Date(createdAt);
-    const updatedDate = new Date(updatedAt);
-    const todayDate = new Date();
 
-    if (createdDate.getTime() === updatedDate.getTime()) {
-      return true;
-    }
-
-    if (todayDate.toDateString() === updatedDate.toDateString()) {
-      return true;
-    }
-
-    if (todayDate > updatedDate) {
-      return false;
-    }
-
-    return true;
+  const isSameOrAfter = (date1, date2) => {
+    const d1 = new Date(date1).setHours(0, 0, 0, 0);
+    const d2 = new Date(date2).setHours(0, 0, 0, 0);
+    return d1 >= d2;
   };
+  
+  const isCheckedIsClaimed = useCallback((createdAt, updatedAt) => {
+    const today = new Date().setHours(0, 0, 0, 0);
+
+    if (isSameOrAfter(createdAt, today) || isSameOrAfter(updatedAt, today)) {
+      return true;
+    }
+    return false;
+},[]);
+
+
 
   useEffect(() => {
     const result = isCheckedIsClaimed(product.createdAt, product.updatedAt);
     setIsClaimed(result);
-  }, [product.createdAt, product.updatedAt]);
+  }, [product.createdAt, product.updatedAt,isCheckedIsClaimed]);
 
   // console.log(product);
 
