@@ -142,7 +142,7 @@ const ModernRegistration = () => {
 
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0] flex flex-col">
+    <div className="h-full flex bg-[#f0f4f0]">
       {/* Top Navigation */}
       {/* <div className="sticky top-0 bg-white px-4 py-3 flex items-center justify-start border-b border-gray-100 shadow-sm">
         <button
@@ -154,9 +154,9 @@ const ModernRegistration = () => {
         <h1 className="text-xl font-semibold text-[#4CA335]">Create Account</h1>
       </div> */}
 
-      <div className="flex-grow flex items-center justify-center">
-        <div className="w-full bg-white">
-          <div className="p-6 mt-10 flex flex-col items-center">
+      {/* <div className="flex-grow flex items-center justify-center"> */}
+        <div className="w-full bg-white flex justify-center items-center">
+          <div className="p-6 my-6 w-full flex flex-col items-center">
             <img
               src={Logo}
               alt="Logo"
@@ -307,7 +307,7 @@ const ModernRegistration = () => {
             </form>
           </div>
         </div>
-      </div>
+      {/* </div> */}
     </div>
   );
 };
