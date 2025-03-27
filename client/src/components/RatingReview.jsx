@@ -1,8 +1,5 @@
-import React, { useState } from "react";
-
 // Component to handle user rating input
-const RatingReview = () => {
-  const [rating, setRating] = useState(0); // State to store the selected rating
+const RatingReview = ({rating,setRating}) => {// State to store the selected rating
 
   // Helper function to set the rating
   const handleRating = (rate) => {
