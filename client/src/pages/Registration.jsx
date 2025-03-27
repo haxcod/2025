@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   Eye,
@@ -9,30 +10,29 @@ import {
   ArrowLeft,
   Smartphone,
   SquareCode,
-} from "lucide-react"; // Ensure SquareCode is imported
-import ErrorPopup from "../components/ErrorPopup";
-import SuccessPopup from "../components/SuccessPopup";
-import { postData } from "../services/apiService";
+} from "lucide-react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import Logo from "/logo-rounded.png";
+import { postData } from "../services/apiService";
+import ErrorPopup from "../components/ErrorPopup";
 
-const Registration = () => {
+const ModernRegistration = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     mobile: "",
-    inviteCode: "", // Add inviteCode to formData
+    inviteCode: "",
     termsAccepted: false,
     fingerprint: "",
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const navigate = useNavigate();
   const [isInviteCode, setIsInviteCode] = useState("");
+  const navigate = useNavigate();
 
-  // Use useEffect to get the inviteCode from the URL query params
+  // Fetch invite code from URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const inviteCode = urlParams.get("inviteCode");
@@ -40,10 +40,10 @@ const Registration = () => {
       setIsInviteCode(inviteCode);
       setFormData((prevData) => ({
         ...prevData,
-        inviteCode: inviteCode, // Set the invite code in formData
+        inviteCode: inviteCode,
       }));
     }
-  }, []); // Empty dependency array ensures this runs only once when the component mounts
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -88,15 +88,15 @@ const Registration = () => {
 
     setLoading(true);
     setErrors({});
-    setSuccessMessage("");
 
     try {
       const fingerprint = await getDeviceFingerprint();
       const requestData = { ...formData, fingerprint };
 
+      // Simulate API call
       const response = await postData("/api/v1/register", requestData);
       if (response.status === 201) {
-        setSuccessMessage("Registration successful! Redirecting...");
+        // setSuccessMessage("Registration successful! Redirecting...");
         setFormData({
           name: "",
           email: "",
@@ -105,8 +105,10 @@ const Registration = () => {
           inviteCode: "",
           termsAccepted: false,
         });
-        setTimeout(() => navigate("/login"), 2000); // Redirect to login
+        navigate("/login")
+        // setTimeout(() => navigate("/login"), 2000); // Redirect to login
       }
+    
     } catch (error) {
       setErrors({
         apiError:
@@ -117,10 +119,11 @@ const Registration = () => {
       setLoading(false);
     }
   };
+
   async function getDeviceFingerprint() {
     const fp = await FingerprintJS.load();
     const result = await fp.get();
-    return result.visitorId; // Unique device/browser fingerprint
+    return result.visitorId;
   }
 
   const handleInputChange = (e) => {
@@ -136,139 +139,177 @@ const Registration = () => {
     setLoading(false);
   };
 
+
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#f0f4f0] flex flex-col">
       {/* Top Navigation */}
-      <div className="sticky top-0 bg-white shadow-sm px-4 py-3 flex items-center border-b border-gray-100">
+      {/* <div className="sticky top-0 bg-white px-4 py-3 flex items-center justify-start border-b border-gray-100 shadow-sm">
         <button
-          className="p-2 hover:bg-gray-100 rounded-full"
+          className="p-2 hover:bg-gray-100 rounded-full mr-4"
           onClick={() => navigate(-1)}
         >
-          <ArrowLeft className="h-6 w-6 text-gray-700" />
+          <ArrowLeft className="h-6 w-6 text-[#4CA335]" />
         </button>
-        <h1 className="ml-4 text-xl font-bold">Create Account</h1>
-      </div>
+        <h1 className="text-xl font-semibold text-[#4CA335]">Create Account</h1>
+      </div> */}
 
-      <div className="px-4 pt-10 pb-4 space-y-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Input Fields */}
-          {["name", "mobile", "email", "inviteCode", "password"].map(
-            (field, idx) => {
-              const icons = {
-                name: <User className="text-gray-400" />,
-                mobile: <Smartphone className="text-gray-400" />,
-                email: <Mail className="text-gray-400" />,
-                password: <Lock className="text-gray-400" />,
-                inviteCode: <SquareCode className="text-gray-400" />,
-              };
+      <div className="flex-grow flex items-center justify-center">
+        <div className="w-full bg-white">
+          <div className="p-6 mt-10 flex flex-col items-center">
+            <img
+              src={Logo}
+              alt="Logo"
+              className="w-28 h-28 rounded-full border-4 border-[#4CA335] mb-6"
+            />
 
-              return (
-                <div key={idx} className="space-y-2">
-                  <label className="block text-[4vw] leading-[5.333333vw] capitalize">
-                    {field}
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      {icons[field]}
+            <h2 className="text-2xl font-bold text-[#4CA335] mb-2">
+              Create Account
+            </h2>
+            <p className="text-gray-500 mb-6 text-center">
+              Sign up to get started
+            </p>
+
+            <form onSubmit={handleSubmit} className="w-full">
+              {/* Input Fields */}
+              {["name", "mobile", "email", "password"].map((field) => {
+                const icons = {
+                  name: <User className="text-[#4CA335]" />,
+                  mobile: <Smartphone className="text-[#4CA335]" />,
+                  email: <Mail className="text-[#4CA335]" />,
+                  password: <Lock className="text-[#4CA335]" />,
+                };
+
+                return (
+                  <>
+                    <div key={field} className="relative w-full mt-4">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        {icons[field]}
+                      </div>
+                      <input
+                        type={
+                          field === "password"
+                            ? showPassword
+                              ? "text"
+                              : "password"
+                            : field === "email"
+                            ? "email"
+                            : "text"
+                        }
+                        name={field}
+                        value={formData[field]}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-[2.133333vw] 
+                        ${
+                          errors[field]
+                            ? "border-red-500 bg-red-50"
+                            : "border-gray-200 focus:border-[#4CA335]"
+                        } 
+                        transition-all duration-300 ease-in-out`}
+                        placeholder={`Enter your ${field}`}
+                        required
+                        disabled={loading}
+                        maxLength={field === "mobile" ? 10 : undefined}
+                      />
+                      {field === "password" && (
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        >
+                          {showPassword ? (
+                            <EyeOff className="text-gray-400" />
+                          ) : (
+                            <Eye className="text-gray-400" />
+                          )}
+                        </button>
+                      )}
                     </div>
-                    <input
-                      type={
-                        field === "password"
-                          ? showPassword
-                            ? "text"
-                            : "password"
-                          : field === "email"
-                          ? "email"
-                          : "text"
-                      }
-                      name={field}
-                      value={formData[field]}
-                      onChange={handleInputChange}
-                      className="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-[2.133333vw] outline-none"
-                      placeholder={`Enter your ${field}`}
-                      required={field === "inviteCode" ? false : true}
-                      disabled={loading || isInviteCode}
-                      maxLength={field === "mobile" ? 10 : undefined}
-                    />
-                    {field === "password" && (
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 pr-4 flex items-center"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-5 w-5 text-gray-400" />
-                        ) : (
-                          <Eye className="h-5 w-5 text-gray-400" />
-                        )}
-                      </button>
+                    {errors[field] && (
+                      <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
                     )}
+                  </>
+                );
+              })}
+
+              {/* Optional Invite Code */}
+              {!isInviteCode && (
+                <div className={`relative my-4`}>
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <SquareCode className="text-[#4CA335]" />
                   </div>
-                  {errors[field] && (
-                    <p className="text-red-500">{errors[field]}</p>
-                  )}
+                  <input
+                    type="text"
+                    name="inviteCode"
+                    value={formData.inviteCode}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-[2.133333vw] focus:border-[#4CA335]"
+                    placeholder="Invite Code (Optional)"
+                  />
                 </div>
-              );
-            }
-          )}
+              )}
 
-          {/* Terms and Conditions */}
-          <div className="space-y-2">
-            <div className="flex items-start space-x-2">
-              <input
-                type="checkbox"
-                name="termsAccepted"
-                checked={formData.termsAccepted}
-                onChange={handleInputChange}
-                className="w-5 h-5 border border-gray-300 rounded-md focus:ring-[#4CA335] text-[#4CA335]"
-                required
-              />
-              <label className="text-sm text-gray-700">
-                I agree to the{" "}
-                <span
-                  className="text-[#459330] font-medium cursor-pointer underline"
-                  onClick={() => navigate("/about")}
-                >
-                  Terms and Conditions
-                </span>
-              </label>
-            </div>
-          </div>
+              {/* Terms and Conditions */}
+              <div className="flex items-start space-x-2">
+                <input
+                  type="checkbox"
+                  name="termsAccepted"
+                  checked={formData.termsAccepted}
+                  onChange={handleInputChange}
+                  className="w-5 h-5 border border-gray-300 rounded-md focus:ring-[#4CA335] text-[#4CA335]"
+                  required
+                />
+                <label className="text-sm text-gray-700">
+                  I agree to the{" "}
+                  <span
+                    className="text-[#4CA335] font-medium cursor-pointer underline"
+                    onClick={() => navigate("/about")}
+                  >
+                    Terms and Conditions
+                  </span>
+                </label>
+              </div>
 
-          {/* API Error */}
-          {errors.apiError && (
+
+              {errors.apiError && (
             <ErrorPopup
               error={errors.apiError}
               handleClose={handleErrorPopup}
             />
           )}
 
-          {/* Success Message */}
-          {successMessage && <SuccessPopup message={successMessage} />}
 
-          {/* Submit Button */}
-          <button
-            className="w-full bg-[#4CA335] hover:bg-[#3e8c2a] text-white py-3 rounded-[2.133333vw] text-[4.266667vw]"
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? "Submitting..." : "Create Account"}
-          </button>
 
-          {/* Navigation to Login */}
-          <div className="w-full text-center text-sm">
-            Already have an account?{" "}
-            <span
-              className="text-[#459330] font-medium cursor-pointer"
-              onClick={() => navigate("/login")}
-            >
-              Sign In
-            </span>
+              {/* Submit Button */}
+              <button
+                className={`w-full my-4 py-3 rounded-[2.133333vw] text-white font-semibold transition-all duration-300 
+                  ${
+                    loading
+                      ? "bg-[#86c75a] cursor-not-allowed"
+                      : "bg-[#4CA335] hover:bg-[#3e8c2a]"
+                  }`}
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? "Creating Account..." : "Create Account"}
+              </button>
+
+              {/* Navigation to Login */}
+              <div className="text-center text-sm pt-4">
+                Already have an account?{" "}
+                <span
+                  className="text-[#4CA335] font-medium cursor-pointer hover:underline"
+                  onClick={() => navigate("/login")}
+                >
+                  Sign In
+                </span>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Registration;
+export default ModernRegistration;

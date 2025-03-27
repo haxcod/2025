@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Smartphone, Lock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Eye, EyeOff, Smartphone, Lock, } from 'lucide-react';
+import Logo from '/logo-rounded.png';
 import { useCookies } from 'react-cookie';
+import { postData } from '../services/apiService';
+import { useNavigate } from 'react-router-dom';
 import ErrorPopup from '../components/ErrorPopup';
 import SuccessPopup from '../components/SuccessPopup';
-import { fetchData, postData } from '../services/apiService';
-import Logo from '/logo-rounded.png'
 
-const Login = () => {
+const ModernLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ mobile: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [cookies, setCookie] = useCookies(['user']); 
   const [isErrorPopup, setIsErrorPopup] = useState(false);
   const [isSuccessPopup, setIsSuccessPopup] = useState(false);
-  const [cookies, setCookie] = useCookies(['user']); // Initialize cookies
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -43,8 +42,7 @@ const Login = () => {
     if (!validateForm()) return;
 
     setLoading(true);
-    setErrors({});
-
+    // Simulated login logic
     try {
       
       const response = await postData('/api/v1/login', formData);
@@ -86,101 +84,130 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen w-full  bg-[#f0f4f0] flex flex-col">
       {/* Top Navigation */}
-      <div className="sticky top-0 bg-white px-4 py-3 flex items-center justify-center border-b border-gray-100">
-        <h1 className="text-center text-xl font-semibold">Log In</h1>
-      </div>
+      {/* <div className="sticky top-0 bg-white px-4 py-3 flex items-center justify-center border-b border-gray-100 shadow-sm">
+        <h1 className="text-center text-xl font-semibold text-[#4CA335]">Log In</h1>
+      </div> */}
 
-      <div className="px-4 pt-6 pb-4 space-y-6">
-        <div className='w-full flex justify-center'>
-        <img src={Logo} className='size-28 flex justify-center rounded-full border-4' />
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Mobile Number */}
-          <div className="space-y-2">
-            <label className="block text-[4vw] leading-[5.333333vw]">Mobile Number</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Smartphone className="text-gray-400" />
-              </div>
-              <input
-                type="tel"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleInputChange}
-                className="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-[2.133333vw] outline-none"
-                placeholder="Enter your mobile number"
-                required
-                disabled={loading}
-              />
-            </div>
-            {errors.mobile && <p className="text-red-500">{errors.mobile}</p>}
-          </div>
+      <div className="flex w-full h-full items-center justify-center">
+        <div
+          className="w-full bg-white h-screen"
+        >
+          <div className="p-6 mt-10 flex flex-col items-center">
+            <img 
+              src={Logo} 
+              alt="Logo" 
+              className="w-28 h-28 rounded-full border-4 border-[#4CA335] mb-6"
+            />
+            
+            <h2 className="text-2xl font-bold text-[#4CA335] mb-2">Welcome Back</h2>
+            <p className="text-gray-500 mb-6 text-center">Sign in to continue to your account</p>
 
-          {/* Password */}
-          <div className="space-y-2">
-            <label className="block text-[4vw] leading-[5.333333vw]">Password</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Lock className=" text-gray-400" />
+            <form onSubmit={handleSubmit} className="w-full">
+              {/* Mobile Number Input */}
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Smartphone className="text-[#4CA335]" />
+                </div>
+                <input
+                  type="tel"
+                  name="mobile"
+                  value={formData.mobile}
+                  onChange={handleInputChange}
+                  className={`w-full pl-10 pr-4 py-3 border-2 rounded-[2.133333vw] 
+                    ${errors.mobile 
+                      ? 'border-red-500 bg-red-50' 
+                      : 'border-gray-200 focus:border-[#4CA335]'} 
+                    transition-all duration-300 ease-in-out`}
+                  placeholder="Enter your mobile number"
+                  disabled={loading}
+                />
+
               </div>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="block w-full pl-11 pr-12 py-3 border border-gray-200 rounded-[2.133333vw] outline-none"
-                placeholder="Enter your password"
-                required
-                disabled={loading}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5 text-gray-400" />
-                ) : (
-                  <Eye className="h-5 w-5 text-gray-400" />
+              {errors.mobile && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.mobile}
+                  </p>
                 )}
-              </button>
-            </div>
-            {errors.password && <p className="text-red-500">{errors.password}</p>}
-          </div>
 
-          {/* Popups */}
+              {/* Password Input */}
+              <div className="relative mt-5">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="text-[#4CA335]" />
+                </div>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={`w-full pl-10 pr-12 py-3 border-2 rounded-[2.133333vw] 
+                    ${errors.password 
+                      ? 'border-red-500 bg-red-50' 
+                      : 'border-gray-200 focus:border-[#4CA335]'} 
+                    transition-all duration-300 ease-in-out`}
+                  placeholder="Enter your password"
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  {showPassword ? (
+                    <EyeOff className="text-gray-400" />
+                  ) : (
+                    <Eye className="text-gray-400" />
+                  )}
+                </button>
+                
+              </div>
+
+              {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.password}
+                  </p>
+                )}
+
+              {/* Forgot Password */}
+              <div className="text-right mt-1">
+                <span className="text-sm text-[#4CA335] cursor-pointer hover:underline">
+                  Forgot Password?
+                </span>
+              </div>
+
+
+               {/* Popups */}
           {isErrorPopup && <ErrorPopup error={errors.apiError} handleClose={handlePopupClose} />}
           {isSuccessPopup && (
             <SuccessPopup message="Login successful! Redirecting..." handleClose={handlePopupClose} />
           )}
 
-          {/* Submit Button */}
-          <div className="pt-6 space-y-4">
-            <button
-              className="w-full bg-[#4CA335] hover:bg-[#3e8c2a] text-white py-3 rounded-[2.133333vw] text-[4.266667vw]"
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? 'Logging in...' : 'Sign In'}
-            </button>
-
-            <div className="w-full text-center text-sm">
-              Don't have an account?{' '}
-              <span
-                className="text-[#459330] font-medium cursor-pointer"
-                onClick={() => navigate('/register')}
+              {/* Submit Button */}
+              <button
+                className={`w-full mt-5 py-3 rounded-[2.133333vw] text-white font-semibold transition-all duration-300 
+                  ${loading 
+                    ? 'bg-[#86c75a] cursor-not-allowed' 
+                    : 'bg-[#4CA335] hover:bg-[#3e8c2a]'}`}
+                type="submit"
+                disabled={loading}
               >
-                Sign Up
-              </span>
-            </div>
+                {loading ? 'Logging in...' : 'Sign In'}
+              </button>
+
+              {/* Register Link */}
+              <div className="text-center text-sm pt-4">
+                Don't have an account?{' '}
+                <span className="text-[#4CA335] font-medium cursor-pointer hover:underline" onClick={()=>navigate('/register')}>
+                  Sign Up
+                </span>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default ModernLogin;
