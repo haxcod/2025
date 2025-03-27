@@ -105,10 +105,9 @@ const ModernRegistration = () => {
           inviteCode: "",
           termsAccepted: false,
         });
-        navigate("/login")
+        navigate("/login");
         // setTimeout(() => navigate("/login"), 2000); // Redirect to login
       }
-    
     } catch (error) {
       setErrors({
         apiError:
@@ -139,8 +138,6 @@ const ModernRegistration = () => {
     setLoading(false);
   };
 
-
-
   return (
     <div className="h-full flex bg-[#f0f4f0]">
       {/* Top Navigation */}
@@ -155,158 +152,157 @@ const ModernRegistration = () => {
       </div> */}
 
       {/* <div className="flex-grow flex items-center justify-center"> */}
-        <div className="w-full bg-white flex justify-center items-center">
-          <div className="p-6 my-6 w-full flex flex-col items-center">
-            <img
-              src={Logo}
-              alt="Logo"
-              className="w-28 h-28 rounded-full border-4 border-[#4CA335] mb-6"
-            />
+      <div className="w-full bg-white flex justify-center items-center">
+        <div className="p-6 my-6 w-full flex flex-col items-center">
+          <img
+            src={Logo}
+            alt="Logo"
+            className="w-28 h-28 rounded-full border-4 border-[#4CA335] mb-6"
+          />
 
-            <h2 className="text-2xl font-bold text-[#4CA335] mb-2">
-              Create Account
-            </h2>
-            <p className="text-gray-500 mb-6 text-center">
-              Sign up to get started
-            </p>
+          <h2 className="text-2xl font-bold text-[#4CA335] mb-2">
+            Create Account
+          </h2>
+          <p className="text-gray-500 mb-6 text-center">
+            Sign up to get started
+          </p>
 
-            <form onSubmit={handleSubmit} className="w-full">
-              {/* Input Fields */}
-              {["name", "mobile", "email", "password"].map((field) => {
-                const icons = {
-                  name: <User className="text-[#4CA335]" />,
-                  mobile: <Smartphone className="text-[#4CA335]" />,
-                  email: <Mail className="text-[#4CA335]" />,
-                  password: <Lock className="text-[#4CA335]" />,
-                };
+          <form onSubmit={handleSubmit} className="w-full">
+            {/* Input Fields */}
+            {["name", "mobile", "email", "password"].map((field) => {
+              const icons = {
+                name: <User className="text-[#4CA335]" />,
+                mobile: <Smartphone className="text-[#4CA335]" />,
+                email: <Mail className="text-[#4CA335]" />,
+                password: <Lock className="text-[#4CA335]" />,
+              };
 
-                return (
-                  <>
-                    <div key={field} className="relative w-full mt-4">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        {icons[field]}
-                      </div>
-                      <input
-                        type={
-                          field === "password"
-                            ? showPassword
-                              ? "text"
-                              : "password"
-                            : field === "email"
-                            ? "email"
-                            : "text"
-                        }
-                        name={field}
-                        value={formData[field]}
-                        onChange={handleInputChange}
-                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-[2.133333vw] 
+              return (
+                <>
+                  <div key={field} className="relative w-full mt-4">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      {icons[field]}
+                    </div>
+                    <input
+                      type={
+                        field === "password"
+                          ? showPassword
+                            ? "text"
+                            : "password"
+                          : field === "email"
+                          ? "email"
+                          : "text"
+                      }
+                      name={field}
+                      value={formData[field]}
+                      onChange={handleInputChange}
+                      className={`w-full pl-10 pr-4 py-3 border-2 rounded-[2.133333vw] 
                         ${
                           errors[field]
                             ? "border-red-500 bg-red-50"
                             : "border-gray-200 focus:border-[#4CA335]"
                         } 
                         transition-all duration-300 ease-in-out`}
-                        placeholder={`Enter your ${field}`}
-                        required
-                        disabled={loading}
-                        maxLength={field === "mobile" ? 10 : undefined}
-                      />
-                      {field === "password" && (
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                        >
-                          {showPassword ? (
-                            <EyeOff className="text-gray-400" />
-                          ) : (
-                            <Eye className="text-gray-400" />
-                          )}
-                        </button>
-                      )}
-                    </div>
-                    {errors[field] && (
-                      <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
+                      placeholder={`Enter your ${field}`}
+                      required
+                      disabled={loading}
+                      autoCorrect="off"
+                      spellCheck="false"
+                      maxLength={field === "mobile" ? 10 : undefined}
+                    />
+                    {field === "password" && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="text-gray-400" />
+                        ) : (
+                          <Eye className="text-gray-400" />
+                        )}
+                      </button>
                     )}
-                  </>
-                );
-              })}
-
-              {/* Optional Invite Code */}
-              {!isInviteCode && (
-                <div className={`relative my-4`}>
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <SquareCode className="text-[#4CA335]" />
                   </div>
-                  <input
-                    type="text"
-                    name="inviteCode"
-                    value={formData.inviteCode}
-                    onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-[2.133333vw] focus:border-[#4CA335]"
-                    placeholder="Invite Code (Optional)"
-                  />
+                  {errors[field] && (
+                    <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
+                  )}
+                </>
+              );
+            })}
+
+            {/* Optional Invite Code */}
+            {!isInviteCode && (
+              <div className={`relative my-4`}>
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <SquareCode className="text-[#4CA335]" />
                 </div>
-              )}
-
-              {/* Terms and Conditions */}
-              <div className="flex items-start space-x-2">
                 <input
-                  type="checkbox"
-                  name="termsAccepted"
-                  checked={formData.termsAccepted}
+                  type="text"
+                  name="inviteCode"
+                  value={formData.inviteCode}
                   onChange={handleInputChange}
-                  className="w-5 h-5 border border-gray-300 rounded-md focus:ring-[#4CA335] text-[#4CA335]"
-                  required
+                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-[2.133333vw] focus:border-[#4CA335]"
+                  placeholder="Invite Code (Optional)"
                 />
-                <label className="text-sm text-gray-700">
-                  I agree to the{" "}
-                  <span
-                    className="text-[#4CA335] font-medium cursor-pointer underline"
-                    onClick={() => navigate("/about")}
-                  >
-                    Terms and Conditions
-                  </span>
-                </label>
               </div>
+            )}
 
+            {/* Terms and Conditions */}
+            <div className="flex items-start space-x-2">
+              <input
+                type="checkbox"
+                name="termsAccepted"
+                checked={formData.termsAccepted}
+                onChange={handleInputChange}
+                className="w-5 h-5 border border-gray-300 rounded-md focus:ring-[#4CA335] text-[#4CA335]"
+                required
+              />
+              <label className="text-sm text-gray-700">
+                I agree to the{" "}
+                <span
+                  className="text-[#4CA335] font-medium cursor-pointer underline"
+                  onClick={() => navigate("/about")}
+                >
+                  Terms and Conditions
+                </span>
+              </label>
+            </div>
 
-              {errors.apiError && (
-            <ErrorPopup
-              error={errors.apiError}
-              handleClose={handleErrorPopup}
-            />
-          )}
+            {errors.apiError && (
+              <ErrorPopup
+                error={errors.apiError}
+                handleClose={handleErrorPopup}
+              />
+            )}
 
-
-
-              {/* Submit Button */}
-              <button
-                className={`w-full my-4 py-3 rounded-[2.133333vw] text-white font-semibold transition-all duration-300 
+            {/* Submit Button */}
+            <button
+              className={`w-full my-4 py-3 rounded-[2.133333vw] text-white font-semibold transition-all duration-300 
                   ${
                     loading
                       ? "bg-[#86c75a] cursor-not-allowed"
                       : "bg-[#4CA335] hover:bg-[#3e8c2a]"
                   }`}
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? "Creating Account..." : "Create Account"}
-              </button>
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Creating Account..." : "Create Account"}
+            </button>
 
-              {/* Navigation to Login */}
-              <div className="text-center text-sm pt-4">
-                Already have an account?{" "}
-                <span
-                  className="text-[#4CA335] font-medium cursor-pointer hover:underline"
-                  onClick={() => navigate("/login")}
-                >
-                  Sign In
-                </span>
-              </div>
-            </form>
-          </div>
+            {/* Navigation to Login */}
+            <div className="text-center text-sm pt-4">
+              Already have an account?{" "}
+              <span
+                className="text-[#4CA335] font-medium cursor-pointer hover:underline"
+                onClick={() => navigate("/login")}
+              >
+                Sign In
+              </span>
+            </div>
+          </form>
         </div>
+      </div>
       {/* </div> */}
     </div>
   );

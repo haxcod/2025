@@ -2,3 +2,7 @@ body{
     font-family: PingFang SC, Microsoft YaHei, -apple-system, BlinkMacSystemFont, Helvetica Neue, Source Han Sans SC, Noto Sans CJK SC, sans-serif !important;
     font-size: 3.466667vw;
 }
+
+html, body {
+    overscroll-behavior: contain;
+  }
