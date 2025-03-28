@@ -176,7 +176,7 @@ const ModernLogin = () => {
             )}
 
             {/* Forgot Password */}
-            <div className="text-right mt-1">
+            <div className="text-right mt-1" onClick={()=>navigate('/forgotpassword')}>
               <span className="text-sm text-[#4CA335] cursor-pointer hover:underline">
                 Forgot Password?
               </span>

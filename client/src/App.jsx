@@ -22,6 +22,7 @@ import Login from './pages/Login';
 import Registration from './pages/Registration';
 import ProtectedRoute from './ProtectedRoute';
 import PaymentConfirmation from './components/PaymentConfirmation';
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
   const routes = createBrowserRouter([
@@ -36,6 +37,10 @@ function App() {
     {
       path: '/register',
       element: <Registration />,
+    },
+    {
+      path: '/forgotpassword',
+      element: <ForgotPassword />,
     },
     {
       path: '/my',
