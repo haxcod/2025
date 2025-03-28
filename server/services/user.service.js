@@ -70,10 +70,14 @@ const loginUser = async (mobile, password) => {
   }
 };
 
-const passwordChange = async (mobile, password) => {
-  try {
+const passwordChange = async (identifier, password) => {
+  try {;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const changeData = userModal.findOneAndUpdate({ mobile: mobile }, { $set: { password: hashedPassword } }, { new: true, runValidators: true });
+    const changeData = await userModal.findOneAndUpdate(
+      { $or: [{ mobile: identifier }, { email: identifier }] },
+      { $set: { password: hashedPassword } },
+      { new: true, runValidators: true }
+  );
     return changeData;
   } catch (error) {
     console.error('Error updating password:', error);

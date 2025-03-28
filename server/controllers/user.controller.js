@@ -5,7 +5,6 @@ const validateFields = (fields) => {
   for (const [key, value] of Object.entries(fields)) {
     if (!value) {
       throw new Error(`${key} is required`);
-      return
     }
   }
 };
@@ -87,10 +86,10 @@ const getInviteUser = async (req, res) => {
 };
 
 const updatePassword = async (req,res)=>{
-  const {mobile,password} = req.body;
-  validateFields({ mobile, password });
+  const {identifier,password} = req.body;
+  validateFields({ identifier, password });
   try{
-   const data = userService.passwordChange(mobile,password);
+   userService.passwordChange(identifier,password);
    res.json({ success: true, message: 'Password updated successfully' });
   }catch(err){
     console.error('Error updating password:', error);

@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import{ useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, ArrowLeft, Lock, EyeOff, Eye } from 'lucide-react';
+import { Mail, Lock, EyeOff, Eye } from 'lucide-react';
 import Logo from '/logo-rounded.png';
-import { postData } from '../services/apiService';
+import { postData, updateData } from '../services/apiService';
 
 const ForgotPassword = () => {
   const [step, setStep] = useState('email'); // 'email', 'otp', 'password'
@@ -72,20 +71,22 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      const response = await postData("/api/v1/forgot-password/send-otp", { 
-        email: formData.email 
+      const response = await postData("/api/v1/send-otp", { 
+        email: formData.email,
       });
+      console.log(response);
+      
 
-      if (response.status === 200) {
+      if (response.success) {
         setStep('otp');
         startOTPTimer();
-      } else {
-        setErrors({ apiError: "Failed to send OTP. Please try again." });
-      }
+      } 
     } catch (error) {
       const errorMessage = 
         error.response?.data?.message || 
         "Failed to send OTP. Please try again.";
+        console.log(error);
+        
       setErrors({ apiError: errorMessage });
     } finally {
       setLoading(false);
@@ -98,12 +99,12 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      const response = await postData("/api/v1/forgot-password/verify-otp", { 
+      const response = await postData("/api/v1/verify-otp", { 
         email: formData.email,
         otp: formData.otp 
       });
 
-      if (response.status === 200) {
+      if (response.success) {
         setStep('password');
       } else {
         setErrors({ apiError: "Invalid OTP. Please try again." });
@@ -124,13 +125,13 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      const response = await postData("/api/v1/forgot-password/reset", { 
-        email: formData.email,
+      const response = await updateData("/api/v1/password", { 
+        identifier : formData.email,
         otp: formData.otp,
-        newPassword: formData.newPassword 
+        password: formData.newPassword 
       });
 
-      if (response.status === 200) {
+      if (response.success) {
         // Show success message and navigate to login
         navigate('/login', { 
           state: { 
@@ -168,11 +169,11 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      const response = await postData("/api/v1/forgot-password/resend-otp", { 
+      const response = await postData("/api/v1/send-opt", { 
         email: formData.email 
       });
 
-      if (response.status === 200) {
+      if (response.success) {
         startOTPTimer();
         setFormData(prev => ({ ...prev, otp: '' }));
       } else {

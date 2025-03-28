@@ -39,7 +39,7 @@ const ResetPassword = () => {
     try {
       setisLoading(true)
       const response = await updateData("/api/v1/password", {
-        mobile: user.userData.mobile, // Include the mobile number to identify the user
+        identifier:user.userData.mobile, // Include the mobile number to identify the user
         password: passwordData.newPassword,
       });
       console.log(response);
