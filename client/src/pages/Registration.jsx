@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   Smartphone,
   SquareCode,
+  KeyRound,
 } from "lucide-react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import Logo from "/logo-rounded.png";
@@ -31,6 +32,14 @@ const ModernRegistration = () => {
   const [loading, setLoading] = useState(false);
   const [isInviteCode, setIsInviteCode] = useState("");
   const navigate = useNavigate();
+  
+  // OTP related states
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpValue, setOtpValue] = useState("");
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [otpResendTimer, setOtpResendTimer] = useState(0);
 
   // Fetch invite code from URL
   useEffect(() => {
@@ -44,6 +53,17 @@ const ModernRegistration = () => {
       }));
     }
   }, []);
+
+  // OTP resend timer
+  useEffect(() => {
+    let interval;
+    if (otpResendTimer > 0) {
+      interval = setInterval(() => {
+        setOtpResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [otpResendTimer]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -76,6 +96,10 @@ const ModernRegistration = () => {
       newErrors.termsAccepted = "You must agree to the terms.";
     }
 
+    if (!otpVerified) {
+      newErrors.otp = "Email verification is required.";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -91,7 +115,7 @@ const ModernRegistration = () => {
 
     try {
       const fingerprint = await getDeviceFingerprint();
-      const requestData = { ...formData, fingerprint };
+      const requestData = { ...formData, fingerprint, emailVerified: otpVerified };
 
       // Simulate API call
       const response = await postData("/api/v1/register", requestData);
@@ -133,25 +157,91 @@ const ModernRegistration = () => {
     }));
   };
 
+  const handleOtpChange = (e) => {
+    setOtpValue(e.target.value);
+    setOtpError("");
+  };
+
   const handleErrorPopup = () => {
     setErrors(false);
     setLoading(false);
   };
 
+  const sendOtp = async () => {
+    // Validate email before sending OTP
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!formData.email.trim() || !emailRegex.test(formData.email)) {
+      setErrors((prev) => ({
+        ...prev,
+        email: "Please enter a valid email address.",
+      }));
+      return;
+    }
+
+    setOtpLoading(true);
+    setOtpError("");
+
+    try {
+      // Simulate API call to send OTP
+      const response = await postData("/api/v1/send-otp", {
+        email: formData.email,
+        isNewAccount:true,
+      });
+      
+      if (response.success) {
+        setOtpSent(true);
+        setOtpResendTimer(60); // Set a 60-second timer for resend
+      }
+      
+    } catch (error) {
+      const errorMessage = 
+      error.response.data?.error || error.response.data?.message || 
+        "Failed to send OTP. Please try again.";
+      
+      setOtpError(
+        errorMessage
+      );
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const verifyOtp = async () => {
+    if (!otpValue || otpValue.length !== 6) {
+      setOtpError("Please enter a valid 6-digit OTP");
+      return;
+    }
+
+    setOtpLoading(true);
+    setOtpError("");
+
+    try {
+      // Simulate API call to verify OTP
+      const response = await postData("/api/v1/verify-otp", {
+        email: formData.email,
+        otp: otpValue,
+      });
+      
+      if (response.success) {
+        setOtpVerified(true);
+      }
+    } catch (error) {
+      setOtpError(
+        error.response?.data?.message || "Invalid OTP. Please try again."
+      );
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const resetOtp = () => {
+    setOtpSent(false);
+    setOtpVerified(false);
+    setOtpValue("");
+  };
+
   return (
     <div className="h-full flex bg-[#f0f4f0]">
-      {/* Top Navigation */}
-      {/* <div className="sticky top-0 bg-white px-4 py-3 flex items-center justify-start border-b border-gray-100 shadow-sm">
-        <button
-          className="p-2 hover:bg-gray-100 rounded-full mr-4"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="h-6 w-6 text-[#4CA335]" />
-        </button>
-        <h1 className="text-xl font-semibold text-[#4CA335]">Create Account</h1>
-      </div> */}
-
-      {/* <div className="flex-grow flex items-center justify-center"> */}
       <div className="w-full bg-white">
         <div className="p-6 py-[14vw] w-full flex flex-col items-center">
           <img
@@ -168,72 +258,218 @@ const ModernRegistration = () => {
           </p>
 
           <form onSubmit={handleSubmit} className="w-full">
-            {/* Input Fields */}
-            {["name", "mobile", "email", "password"].map((field) => {
-              const icons = {
-                name: <User className="text-[#4CA335]" />,
-                mobile: <Smartphone className="text-[#4CA335]" />,
-                email: <Mail className="text-[#4CA335]" />,
-                password: <Lock className="text-[#4CA335]" />,
-              };
+            {/* Name Field */}
+            <div className="relative w-full mt-4">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <User className="text-[#4CA335]" />
+              </div>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className={`w-full pl-10 pr-4 py-3 border-2 rounded-[2.133333vw] 
+                  ${
+                    errors.name
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-200 focus:border-[#4CA335]"
+                  } 
+                  transition-all duration-300 ease-in-out`}
+                placeholder="Enter your name"
+                required
+                disabled={loading}
+                autoCorrect="off"
+                spellCheck="false"
+              />
+            </div>
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+            )}
 
-              return (
-                <>
-                  <div key={field} className="relative w-full mt-4">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      {icons[field]}
-                    </div>
-                    <input
-                      type={
-                        field === "password"
-                          ? showPassword
-                            ? "text"
-                            : "password"
-                          : field === "email"
-                          ? "email"
-                          : "text"
-                      }
-                      name={field}
-                      value={formData[field]}
-                      onChange={handleInputChange}
-                      className={`w-full pl-10 pr-4 py-3 border-2 rounded-[2.133333vw] 
-                        ${
-                          errors[field]
-                            ? "border-red-500 bg-red-50"
-                            : "border-gray-200 focus:border-[#4CA335]"
-                        } 
-                        transition-all duration-300 ease-in-out`}
-                      placeholder={`Enter your ${field}`}
-                      required
-                      disabled={loading}
-                      autoCorrect="off"
-                      spellCheck="false"
-                      maxLength={field === "mobile" ? 10 : undefined}
-                    />
-                    {field === "password" && (
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="text-gray-400" />
-                        ) : (
-                          <Eye className="text-gray-400" />
-                        )}
-                      </button>
-                    )}
+            {/* Mobile Field */}
+            <div className="relative w-full mt-4">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Smartphone className="text-[#4CA335]" />
+              </div>
+              <input
+                type="text"
+                name="mobile"
+                value={formData.mobile}
+                onChange={handleInputChange}
+                className={`w-full pl-10 pr-4 py-3 border-2 rounded-[2.133333vw] 
+                  ${
+                    errors.mobile
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-200 focus:border-[#4CA335]"
+                  } 
+                  transition-all duration-300 ease-in-out`}
+                placeholder="Enter your mobile"
+                required
+                disabled={loading}
+                autoCorrect="off"
+                spellCheck="false"
+                maxLength={10}
+              />
+            </div>
+            {errors.mobile && (
+              <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>
+            )}
+
+            {/* Email Field */}
+            <div className="relative w-full mt-4">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="text-[#4CA335]" />
+              </div>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`w-full pl-10 pr-4 py-3 border-2 rounded-[2.133333vw] 
+                  ${
+                    errors.email
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-200 focus:border-[#4CA335]"
+                  } 
+                  transition-all duration-300 ease-in-out
+                  ${otpVerified ? "bg-green-50 border-green-500" : ""}`}
+                placeholder="Enter your email"
+                required
+                disabled={loading || otpVerified}
+                autoCorrect="off"
+                spellCheck="false"
+              />
+              {otpVerified && (
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <span className="text-green-500 text-sm font-medium">Verified</span>
+                </div>
+              )}
+              {!otpVerified && (
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <button
+                    type="button"
+                    onClick={sendOtp}
+                    disabled={otpLoading || otpResendTimer > 0 || !formData.email}
+                    className={`text-sm font-medium ${
+                      otpLoading || otpResendTimer > 0 || !formData.email
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-[#4CA335] hover:text-[#3e8c2a]"
+                    }`}
+                  >
+                    {otpLoading
+                      ? "Sending..."
+                      : otpResendTimer > 0
+                      ? `Resend in ${otpResendTimer}s`
+                      : otpSent
+                      ? "Resend OTP"
+                      : "Send OTP"}
+                  </button>
+                </div>
+              )}
+            </div>
+            {otpError && (
+                  <p className="text-red-500 text-sm mt-1">{otpError}</p>
+                )}  
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
+
+            {/* OTP Verification Field (shows only when OTP is sent) */}
+            {otpSent && !otpVerified && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mt-4"
+              >
+                <div className="relative w-full">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <KeyRound className="text-[#4CA335]" />
                   </div>
-                  {errors[field] && (
-                    <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
-                  )}
-                </>
-              );
-            })}
+                  <input
+                    type="text"
+                    value={otpValue}
+                    onChange={handleOtpChange}
+                    className={`w-full pl-10 pr-28 py-3 border-2 rounded-[2.133333vw] 
+                      ${
+                        otpError
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-200 focus:border-[#4CA335]"
+                      }`}
+                    placeholder="Enter 6-digit OTP"
+                    maxLength={6}
+                  />
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <button
+                      type="button"
+                      onClick={verifyOtp}
+                      disabled={otpLoading || otpValue.length !== 6}
+                      className={`text-sm font-medium ${
+                        otpLoading || otpValue.length !== 6
+                          ? "text-gray-400 cursor-not-allowed"
+                          : "text-[#4CA335] hover:text-[#3e8c2a]"
+                      }`}
+                    >
+                      {otpLoading ? "Verifying..." : "Verify OTP"}
+                    </button>
+                  </div>
+                </div>
+                {otpError && (
+                  <p className="text-red-500 text-sm mt-1">{otpError}</p>
+                )}
+                <p className="text-gray-500 text-sm mt-2">
+                  We've sent a verification code to {formData.email}
+                </p>
+              </motion.div>
+            )}
+
+            {/* Password Field - Now below OTP */}
+            <div className="relative w-full mt-4">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="text-[#4CA335]" />
+              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className={`w-full pl-10 pr-10 py-3 border-2 rounded-[2.133333vw] 
+                  ${
+                    errors.password
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-200 focus:border-[#4CA335]"
+                  } 
+                  transition-all duration-300 ease-in-out`}
+                placeholder="Enter your password"
+                required
+                disabled={loading}
+                autoCorrect="off"
+                spellCheck="false"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                {showPassword ? (
+                  <EyeOff className="text-gray-400" />
+                ) : (
+                  <Eye className="text-gray-400" />
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            )}
+
+            {/* OTP verification error */}
+            {errors.otp && (
+              <p className="text-red-500 text-sm mt-3">{errors.otp}</p>
+            )}
 
             {/* Optional Invite Code */}
             {!isInviteCode && (
-              <div className={`relative my-4`}>
+              <div className={`relative mt-4`}>
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <SquareCode className="text-[#4CA335]" />
                 </div>
@@ -249,7 +485,7 @@ const ModernRegistration = () => {
             )}
 
             {/* Terms and Conditions */}
-            <div className="flex items-start space-x-2">
+            <div className="flex items-start space-x-2 mt-4">
               <input
                 type="checkbox"
                 name="termsAccepted"
@@ -268,6 +504,9 @@ const ModernRegistration = () => {
                 </span>
               </label>
             </div>
+            {errors.termsAccepted && (
+              <p className="text-red-500 text-sm mt-1">{errors.termsAccepted}</p>
+            )}
 
             {errors.apiError && (
               <ErrorPopup
@@ -303,7 +542,6 @@ const ModernRegistration = () => {
           </form>
         </div>
       </div>
-      {/* </div> */}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import{ useState } from 'react';
 import orderIcon from '../assets/order_icon.png';
 import teamIcon from '../assets/team_icon.png';
 import vipIcon from '../assets/vip_icon.png';
@@ -60,7 +60,7 @@ const MenuItem = ({ balance, teamCount, commission }) => {
         >
           <div className="flex items-center font-normal ">
             <div className="size-[5.333333vw] mr-[2.666667vw]">
-            {item.name === "Logout" ? <LogOut size={24}/> : <img src={item.icon} alt={`${item.name} icon`} />}
+            {item.name === "Logout" ? <LogOut size={'5.333333vw'} /> : <img src={item.icon} alt={`${item.name} icon`} />}
               
              
             </div>

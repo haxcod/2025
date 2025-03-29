@@ -1,14 +1,14 @@
 const otpService = require('../services/otp.service');
 
 const sendOTP = async (req, res) => {
-    const { email } = req.body;
+    const { email, isNewAccount } = req.body;
 
     if (!email) {
         return res.status(400).json({ success: false, message: "Email are required" });
     }
 
     try {
-        const infoResponse = await otpService.sendEmail(email);
+        const infoResponse = await otpService.sendOtp(email, isNewAccount);
         console.log("✅ Email Sent Successfully:", infoResponse);
 
         res.status(200).json({ success: true, message: "OTP sent successfully", infoResponse });
