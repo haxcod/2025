@@ -93,7 +93,7 @@ const ModernLogin = () => {
       </div> */}
 
       {/* <div className="flex w-full h-full items-center justify-center"> */}
-      <div className="w-ful h-screen py-[15vw]">
+      <div className="w-ful h-screen py-[18vw]">
         <div className="p-6 w-full flex flex-col items-center">
           <img
             src={Logo}

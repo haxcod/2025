@@ -390,7 +390,7 @@ const ForgotPassword = () => {
       </div> */}
 
         <div 
-          className="w-full h-screen flex py-[15vw]"
+          className="w-full h-screen flex py-[18vw]"
         >
           <div className="w-full p-6 flex flex-col items-center">
             <img 
