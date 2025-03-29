@@ -19,7 +19,7 @@ const sendEmail = async (email) => {
     if (!user) {
         throw new Error("User not found with this email");
     }
-    const otpRequests  = await otpModel.find({ userId: user._id });
+    const otpRequests = await otpModel.find({ userId: user._id });
     if (otpRequests.length >= 3) {
         throw new Error("OTP request limit exceeded. Please try again after 1 hour.");
     }

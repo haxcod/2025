@@ -83,9 +83,9 @@ const ForgotPassword = () => {
       } 
     } catch (error) {
       const errorMessage = 
-        error.response?.data?.message || 
+      error.response.data?.error || error.response.data?.message || 
         "Failed to send OTP. Please try again.";
-        console.log(error);
+        console.log(error.response.data?.error);
         
       setErrors({ apiError: errorMessage });
     } finally {
@@ -181,7 +181,7 @@ const ForgotPassword = () => {
       }
     } catch (error) {
       const errorMessage = 
-        error.response?.data?.message || 
+      error.response.data?.error || error.response.data?.message || 
         "Failed to resend OTP. Please try again.";
       setErrors({ apiError: errorMessage });
     } finally {
