@@ -13,10 +13,20 @@ import downloadIcon from '../assets/download_icon.png';
 import nextArrow from '../assets/next_arrow.png';
 import { useNavigate } from 'react-router-dom';
 import LanguageDialog from './LanguageDialog'; // Import LanguageDialog
+import { LogOut } from 'lucide-react';
+import { useCookies } from 'react-cookie';
 
 const MenuItem = ({ balance, teamCount, commission }) => {
   const [showLanguageDialog, setShowLanguageDialog] = useState(false); // State for showing dialog
   const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies(["user"]); //
+
+  const handleLogout = () => {
+    removeCookie("user", { path: "/" }); 
+
+    // Redirect to the login page after logout
+    navigate("/login");
+  };
 
   const items = [
     { name: 'My Order', icon: orderIcon, hint: `₹ ${balance || 0}`, to: '/myorder' },
@@ -30,6 +40,14 @@ const MenuItem = ({ balance, teamCount, commission }) => {
     { name: 'Reset Password', icon: passwordIcon, hint: '', to: '/resetpassword' },
     // { name: 'Language', icon: languageIcon, hint: '', to: '', onClick: () => setShowLanguageDialog(true) }, // Handle Language click
     { name: 'Download App', icon: downloadIcon, hint: '', to: '' },
+    {
+      name: "Logout",
+      icon: "",
+      hint: "",
+      to: "",
+      onClick: handleLogout, // Call the logout function
+    },
+
   ];
 
   return (
@@ -42,7 +60,9 @@ const MenuItem = ({ balance, teamCount, commission }) => {
         >
           <div className="flex items-center font-normal ">
             <div className="size-[5.333333vw] mr-[2.666667vw]">
-              <img src={item.icon} alt={`${item.name} icon`} />
+            {item.name === "Logout" ? <LogOut size={24}/> : <img src={item.icon} alt={`${item.name} icon`} />}
+              
+             
             </div>
             <div className="text-[3.733333vw]">{item.name}</div>
           </div>
@@ -55,6 +75,7 @@ const MenuItem = ({ balance, teamCount, commission }) => {
             </div>
           </div>
         </div>
+
       ))}
       {<LanguageDialog isOpen={showLanguageDialog} onClose={()=>setShowLanguageDialog(false)}/>} {/* Render LanguageDialog if shown */}
     </>

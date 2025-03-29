@@ -22,7 +22,6 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = async (email) => {
-    console.log(email);
 
     const otp = Math.floor(100000 + Math.random() * 900000);
     const user = await userModel.findOne({ email });

@@ -1,7 +1,7 @@
 const otpService = require('../services/otp.service');
 
 const sendOTP = async (req, res) => {
-    const { email} = req.body;
+    const { email } = req.body;
 
     if (!email) {
         return res.status(400).json({ success: false, message: "Email are required" });
@@ -42,4 +42,4 @@ const verifyOTP = async (req, res) => {
     }
 };
 
-module.exports = { sendOTP,verifyOTP };
+module.exports = { sendOTP, verifyOTP };
