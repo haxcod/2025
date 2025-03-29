@@ -152,8 +152,8 @@ const ModernRegistration = () => {
       </div> */}
 
       {/* <div className="flex-grow flex items-center justify-center"> */}
-      <div className="w-full bg-white flex justify-center items-center">
-        <div className="p-6 my-6 w-full flex flex-col items-center">
+      <div className="w-full bg-white">
+        <div className="p-6 py-[14vw] w-full flex flex-col items-center">
           <img
             src={Logo}
             alt="Logo"

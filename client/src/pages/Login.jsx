@@ -86,14 +86,14 @@ const ModernLogin = () => {
   };
 
   return (
-    <div className="h-full w-full bg-[#f0f4f0]">
+    <div className="h-full w-full bg-white">
       {/* Top Navigation */}
       {/* <div className="sticky top-0 bg-white px-4 py-3 flex items-center justify-center border-b border-gray-100 shadow-sm">
         <h1 className="text-center text-xl font-semibold text-[#4CA335]">Log In</h1>
       </div> */}
 
       {/* <div className="flex w-full h-full items-center justify-center"> */}
-      <div className="w-full bg-white h-screen flex justify-center items-center">
+      <div className="w-ful h-screen py-[15vw]">
         <div className="p-6 w-full flex flex-col items-center">
           <img
             src={Logo}
