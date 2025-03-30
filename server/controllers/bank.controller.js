@@ -27,6 +27,8 @@ const bankData = async (req, res) => {
 
 const bankDataGet = async (req, res) => {
     const { mobile } = req.query;
+    console.log(mobile);
+    
     //  req.params;
     if (!mobile) {
         return res.status(400).json({

@@ -31,7 +31,7 @@ const createTransaction = async (req, res) => {
 
 const getTransactions = async (req, res) => {
     const { mobile } = req.query;
-
+    
     // Validate input
     if (!mobile) {
         return res.status(400).json({

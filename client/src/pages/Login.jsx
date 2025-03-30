@@ -52,6 +52,7 @@ const ModernLogin = () => {
           path: "/",
           maxAge: 86400,
         }); // Cookie valid for 1 day
+        localStorage.setItem('userToken',response.token);
 
         setFormData({ mobile: "", password: "" });
         setIsSuccessPopup(true); // Show success popup

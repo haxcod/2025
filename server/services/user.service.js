@@ -1,11 +1,12 @@
 const userModal = require('../models/user.model');
 const rechargeModal = require('../models/transaction.model')
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 
-const createUser = async (name, email, mobile, password, inviteCode,fingerprint) => {
+const createUser = async (name, email, mobile, password, inviteCode, fingerprint) => {
   try {
     // Input validation
-    if (!name || !email || !mobile || !password ) {
+    if (!name || !email || !mobile || !password) {
       throw new Error('All fields are required: name, email, mobile, and password');
     }
 
@@ -25,8 +26,8 @@ const createUser = async (name, email, mobile, password, inviteCode,fingerprint)
       if (!inviter) {
         throw new Error('Invalid invite code');
       }
-    }  
-  
+    }
+
     // Save the user to the database
     const user = await userModal.create({
       name,
@@ -50,15 +51,15 @@ const loginUser = async (mobile, password) => {
     if (!mobile || !password) {
       throw new Error('Both mobile and password are required');
     }
-    
+
     // Find the user by mobile number
-    const user = await userModal.findOne({mobile});
+    const user = await userModal.findOne({ mobile });
     if (!user) {
       throw new Error('User not found');
     }
     // Compare the entered password with the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    
+
     if (!isPasswordValid) {
       throw new Error('Invalid password');
     }
@@ -70,14 +71,36 @@ const loginUser = async (mobile, password) => {
   }
 };
 
+const createJWT = (user) => {
+  try {
+    return jwt.sign({user}, process.env.JWT_SECRET_KEY, {
+      expiresIn: '2 days'
+    })
+  } catch (err) {
+    console.log(err);
+    
+    throw err
+  }
+}
+
+const verifyJWT =(token)=>{
+ try{
+   const response = jwt.verify(token,process.env.JWT_SECRET_KEY);
+   return response
+ }catch(err){
+  throw err
+ }
+}
+
 const passwordChange = async (identifier, password) => {
-  try {;
+  try {
+    ;
     const hashedPassword = await bcrypt.hash(password, 10);
     const changeData = await userModal.findOneAndUpdate(
       { $or: [{ mobile: identifier }, { email: identifier }] },
       { $set: { password: hashedPassword } },
       { new: true, runValidators: true }
-  );
+    );
     return changeData;
   } catch (error) {
     console.error('Error updating password:', error);
@@ -97,10 +120,10 @@ const getInvitedUsers = async (userId) => {
 
     // Iterate through each invited user
     for (const user of invitedUsers) {
-      
+
       // Get user's total recharge amount
-      const recharges = await rechargeModal.find({ mobile: user.mobile, type:'credit' }).select("amount createdAt");
-     
+      const recharges = await rechargeModal.find({ mobile: user.mobile, type: 'credit' }).select("amount createdAt");
+
       // Calculate total recharge amount
       const totalRecharge = recharges.reduce((sum, rec) => sum + rec.amount, 0);
 
@@ -134,6 +157,16 @@ const getInvitedUsers = async (userId) => {
 };
 
 
+const getUserById = async (id)=>{
+  try{
+    const response = userModal.findById(id);
+    return response;
+  }catch(err){
+    throw err;
+  }
+}
 
 
-module.exports = { createUser, loginUser, getInvitedUsers, passwordChange };
+
+
+module.exports = { createUser, loginUser, getInvitedUsers, passwordChange, createJWT,verifyJWT,getUserById };

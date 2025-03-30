@@ -32,17 +32,28 @@ const createUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { mobile, password } = req.body;
-
+  
   try {
     // Validate required fields
     validateFields({ mobile, password });
 
     // Call service to log in the user
     const user = await userService.loginUser(mobile, password);
+    const userData = {_id:user._id}
+    const token = userService.createJWT(userData)
+    if(!token){
+      return res.status(500).json({
+        status: 500,
+        message: 'Failed to create jwt',
+        data: {},
+        err:"server error"
+      });
+    }
     res.status(200).json({
       status: 200,
       message: 'Login successful',
       data: user,
+      token,
     });
   } catch (err) {
     res.status(err.status || 400).json({
