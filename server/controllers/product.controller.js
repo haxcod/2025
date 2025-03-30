@@ -1,19 +1,19 @@
 const productService = require('../services/product.service');
 
 const createProduct = async (req, res) => {
-    const { mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate } = req.body;
+    const { fundId, mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate } = req.body;
 
     // Validate input
-    if (!mobile || !fundName || !status || !revenueDays || !dailyEarnings || !totalRevenue || !currentPrice || !vip || !expireDate) {
+    if (!fundId || !mobile || !fundName || !status || !revenueDays || !dailyEarnings || !totalRevenue || !currentPrice || !vip || !expireDate) {
         return res.status(400).json({
             status: 400,
-            message: "All fields (mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate) are required.",
+            message: "All fields (fundId, mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate) are required.",
         });
     }
 
     try {
         // Call the service to create the product
-        const product = await productService.createMyProduct(mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate);
+        const product = await productService.createMyProduct(fundId, mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate);
         return res.status(201).json({
             status: 201,
             message: "Product created successfully.",
@@ -28,7 +28,7 @@ const createProduct = async (req, res) => {
     }
 };
 
-const getProducts = async (req, res) => {
+const getMyProducts = async (req, res) => {
     const { mobile } = req.query;
 
     // Validate input
@@ -91,4 +91,23 @@ const isClaimed = async (req, res) => {
     }
 };
 
-module.exports = { createProduct, getProducts, isClaimed };
+const getProducts = async (req, res) => {
+
+    try {
+        // Call the service to fetch products
+        const products = await productService.getProducts();
+        return res.status(200).json({
+            status: 200,
+            message: "Products retrieved successfully.",
+            data: products,
+        });
+    } catch (err) {
+        console.error("Error in getProducts:", err.message || err);
+        return res.status(500).json({
+            status: 500,
+            message: err.message || "Internal server error",
+        });
+    }
+};
+
+module.exports = { createProduct, getProducts, getMyProducts, isClaimed };

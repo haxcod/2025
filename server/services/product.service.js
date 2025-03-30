@@ -1,15 +1,15 @@
 const productModal = require('../models/product.modal');
 
 // Function to add a new product
-const createMyProduct = async (mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate) => {
+const createMyProduct = async (fundId, mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate) => {
     try {
         // Validate input
-        if (!mobile || !fundName || !status || !revenueDays || !dailyEarnings || !totalRevenue || !currentPrice || !vip || !expireDate) {
+        if (!fundId || !mobile || !fundName || !status || !revenueDays || !dailyEarnings || !totalRevenue || !currentPrice || !vip || !expireDate) {
             throw new Error("All fields are required.");
         }
 
         // Create a new product record
-        const productData = await productModal.myProduct.create({ mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate });
+        const productData = await productModal.myProduct.create({ fundId, mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate });
 
         return productData;
     } catch (err) {
@@ -64,4 +64,16 @@ const getMyProduct = async (mobile) => {
     }
 };
 
-module.exports = { createMyProduct, getMyProduct,isClaimed };
+const getProducts = async () => {
+    try {
+        // Find the products for the provided mobile number
+        const data = await productModal.Product.find();
+        return data;
+    } catch (err) {
+        console.error("Error in getMyProduct service:", err.message || err);
+        // Rethrow the error to let the controller handle it
+        throw err;
+    }
+};
+
+module.exports = { createMyProduct, getMyProduct, isClaimed, getProducts };

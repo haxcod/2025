@@ -13,6 +13,8 @@ const ProductProfile = () => {
     description: "No details available",
   };
 
+
+
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -65,6 +67,7 @@ const ProductProfile = () => {
 
     const allData = {
       mobile: mobile,
+      fundId: product.fundId || "",
       fundName: product.fundName || "",
       status: product.status || "",
       revenueDays: product.revenueDays || "",
@@ -89,7 +92,6 @@ const ProductProfile = () => {
         "/api/v1/transactions",
         transactionData
       );
-      console.log(transactionResponse);
 
       if (!transactionResponse || transactionResponse.status !== 201) {
         throw new Error("Transaction creation failed.");
@@ -208,7 +210,7 @@ const ProductProfile = () => {
           {[
             { label: "Each price", value: `₹ ${product.currentPrice || 0}` },
             { label: "Revenue", value: `${product.revenueDays || 0} days` },
-            { label: "Maximum", value: "1" },
+            { label: "Maximum", value: `${product.purchaseCount}` },
           ].map((item, index) => (
             <div key={index} className="flex justify-between mb-[3.2vw]">
               <p className="text-[#666] text-[4vw]">{item.label}</p>
@@ -264,9 +266,13 @@ const ProductProfile = () => {
           className="p-[3.466667vw_9.066667vw] text-[3.466667vw] text-white rounded-[2.13333vw] h-[12.8vw] bg-[#4CA335] flex items-center justify-center"
           type="button"
           onClick={handleInvestNow}
-          disabled={loading}
+          disabled={loading || !product.canBuy} // Fix: Disabled when cannot buy
         >
-          {loading ? "Processing..." : "Invest Now"}
+          {loading
+            ? "Processing..."
+            : !product.canBuy
+            ? "Product Limit Exceeded"
+            : "Invest Now"}
         </button>
       </div>
     </div>

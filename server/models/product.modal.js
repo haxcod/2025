@@ -10,6 +10,7 @@ const myProductSchema = new mongoose.Schema(
                 message: (props) => `${props.value} is not a valid mobile number.`,
             },
         },
+        fundId: { type: String, required: true },
         fundName: {
             type: String,
             required: true,
@@ -35,7 +36,7 @@ const myProductSchema = new mongoose.Schema(
             required: true,
         },
         vip: {
-            type: Boolean,
+            type: Number,
             required: true,
         },
         expireDate: {
@@ -56,6 +57,7 @@ const productSchema = new mongoose.Schema({
     fundId: { type: String, required: true, unique: true },
     fundName: { type: String, required: true },
     status: { type: String, required: true },
+    category: { type: String, required: true },
     revenueDays: { type: Number, required: true },
     dailyEarnings: { type: Number, required: true },
     totalRevenue: { type: Number, required: true },
