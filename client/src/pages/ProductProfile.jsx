@@ -37,7 +37,13 @@ const ProductProfile = () => {
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value, 10);
     if (!isNaN(value) && value > 0) {
+      const remainingQuantity = product.purchaseCount - product.howMuchBuy;
+
+    if (value <= remainingQuantity) {
       setQuantity(value);
+    } else {
+      alert(`You can only buy up to ${remainingQuantity} more units.`);
+    }
     } else {
       setQuantity(0);
     }
@@ -210,7 +216,7 @@ const ProductProfile = () => {
           {[
             { label: "Each price", value: `₹ ${product.currentPrice || 0}` },
             { label: "Revenue", value: `${product.revenueDays || 0} days` },
-            { label: "Maximum", value: `${product.purchaseCount}` },
+            { label: "Maximum", value: `${product.purchaseCount-product.howMuchBuy}` },
           ].map((item, index) => (
             <div key={index} className="flex justify-between mb-[3.2vw]">
               <p className="text-[#666] text-[4vw]">{item.label}</p>

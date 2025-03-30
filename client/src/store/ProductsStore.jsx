@@ -30,6 +30,7 @@ const fetchProducts = async (mobile) => {
         ...product,
         isPurchased: !!ownedProducts,
         canBuy: canBuyMore,
+        howMuchBuy:ownedProducts.length,
       };
     });
     return updatedProducts;
