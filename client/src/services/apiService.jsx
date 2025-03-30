@@ -10,23 +10,23 @@ const apiClient = axios.create({
 });
 
 // Function to get token from localStorage
-const getAuthToken = () => {
-  return localStorage.getItem('userToken'); // Retrieve token from storage
-};
+// const getAuthToken = () => {
+//   return localStorage.getItem('userToken'); // Retrieve token from storage
+// };
 
-// Axios request interceptor to dynamically add token
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = getAuthToken();
-    if (token) {
-      config.headers['x-access-token'] = token;
-    } else {
-      delete config.headers['x-access-token']; // Remove if no token
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// // Axios request interceptor to dynamically add token
+// apiClient.interceptors.request.use(
+//   (config) => {
+//     const token = getAuthToken();
+//     if (token) {
+//       config.headers['x-access-token'] = token;
+//     } else {
+//       delete config.headers['x-access-token']; // Remove if no token
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
 
 // API Functions (No Hooks Used)
 export const fetchData = async (endpoint, params = {}) => {

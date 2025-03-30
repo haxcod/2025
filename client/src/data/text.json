@@ -1,0 +1,29 @@
+[
+    {
+      "fundId": "LF001",
+      "fundName": "Land Fund No. 1",
+      "status": "Hot",
+      "revenueDays": 55,
+      "dailyEarnings": 198,
+      "totalRevenue": 10890,
+      "currentPrice": 495,
+      "vip": 1,
+      "purchaseTime": "2024-03-15T10:30:00Z",
+      "availability": "Active",
+      "purchaseCount": 1
+    },
+    {
+      "fundId": "LF003",
+      "fundName": "Land Fund No. 3",
+      "status": "Trending",
+      "revenueDays": 70,
+      "dailyEarnings": 250,
+      "totalRevenue": 17500,
+      "currentPrice": 600,
+      "vip": 2,
+      "purchaseTime": "2024-05-10T14:45:00Z",
+      "availability": "Inactive",
+      "purchaseCount": 3
+    }
+  ]
+  

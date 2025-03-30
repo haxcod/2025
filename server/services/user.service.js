@@ -73,23 +73,21 @@ const loginUser = async (mobile, password) => {
 
 const createJWT = (user) => {
   try {
-    return jwt.sign({user}, process.env.JWT_SECRET_KEY, {
-      expiresIn: '2 days'
-    })
+    return jwt.sign({ user }, process.env.JWT_SECRET_KEY)
   } catch (err) {
     console.log(err);
-    
+
     throw err
   }
 }
 
-const verifyJWT =(token)=>{
- try{
-   const response = jwt.verify(token,process.env.JWT_SECRET_KEY);
-   return response
- }catch(err){
-  throw err
- }
+const verifyJWT = (token) => {
+  try {
+    const response = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    return response
+  } catch (err) {
+    throw err
+  }
 }
 
 const passwordChange = async (identifier, password) => {
@@ -157,11 +155,11 @@ const getInvitedUsers = async (userId) => {
 };
 
 
-const getUserById = async (id)=>{
-  try{
+const getUserById = async (id) => {
+  try {
     const response = userModal.findById(id);
     return response;
-  }catch(err){
+  } catch (err) {
     throw err;
   }
 }
@@ -169,4 +167,4 @@ const getUserById = async (id)=>{
 
 
 
-module.exports = { createUser, loginUser, getInvitedUsers, passwordChange, createJWT,verifyJWT,getUserById };
+module.exports = { createUser, loginUser, getInvitedUsers, passwordChange, createJWT, verifyJWT, getUserById };

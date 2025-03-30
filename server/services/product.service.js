@@ -9,7 +9,7 @@ const createMyProduct = async (mobile, fundName, status, revenueDays, dailyEarni
         }
 
         // Create a new product record
-        const productData = await productModal.create({ mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate });
+        const productData = await productModal.myProduct.create({ mobile, fundName, status, revenueDays, dailyEarnings, totalRevenue, currentPrice, vip, expireDate });
 
         return productData;
     } catch (err) {
@@ -30,7 +30,7 @@ const isClaimed = async (productId, amount) => {
 
     // Update the product's claimed amount and return the updated document
     try {
-        const product = await productModal.findById(productId);
+        const product = await productModal.myProduct.findById(productId);
         const currentClaimed = parseInt(product.claimed);
         const newClaimed = currentClaimed + amount;
         const updatedProduct = await productModal.findByIdAndUpdate(
@@ -55,7 +55,7 @@ const isClaimed = async (productId, amount) => {
 const getMyProduct = async (mobile) => {
     try {
         // Find the products for the provided mobile number
-        const data = await productModal.find({ mobile });
+        const data = await productModal.myProduct.find({ mobile });
         return data;
     } catch (err) {
         console.error("Error in getMyProduct service:", err.message || err);
