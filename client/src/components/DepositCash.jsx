@@ -112,8 +112,8 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
   };
 
   const handleDeposit = async () => {
-    if (!depositAmount || isNaN(depositAmount) || depositAmount < 1 || depositAmount > 100000) {
-      setError("Please enter a valid deposit amount between ₹100 and ₹100,000.");
+    if (!depositAmount || isNaN(depositAmount) || depositAmount < 120 || depositAmount > 100000) {
+      setError("Please enter a valid deposit amount between ₹120 and ₹100,000.");
       return;
     }
 
@@ -121,7 +121,7 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
     setError("");
 
     try {
-      const sessionData = await getSessionId(depositAmount);
+      const sessionData = await getSessionId(1);
       if (!sessionData) return;
 
       const { sessionId, orderId } = sessionData;
@@ -184,7 +184,7 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
       {/* Deposit Button */}
       <button
         className={`mt-[6.666667vw] p-[0_4.266667vw] rounded-[2.133333vw] h-[12.8vw] text-[4.266667vw] text-white ${
-          depositAmount && depositAmount >= 200 && depositAmount <= 100000
+          depositAmount && depositAmount >= 120 && depositAmount <= 100000
             ? "bg-[#4CA335] active:bg-[#459330]"
             : "bg-gray-400 cursor-not-allowed"
         } w-full outline-none`}
