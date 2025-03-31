@@ -74,7 +74,10 @@ const DepositCash = ({ mobileNumber, inviteBy }) => {
   const verifyPayment = async (orderId) => {
     try {
       const res = await postData("/api/v1/verify", { orderId });
-
+       console.log(res);
+       console.log(res?.data?.payment_status);
+       
+       
       if (res?.data?.payment_status === "PAID") {
         await createTransaction("completed");
         setShowSuccessPopup(true);
