@@ -5,7 +5,7 @@ import { load } from "@cashfreepayments/cashfree-js";
 import SuccessPopup from "./SuccessPopup";
 import ErrorPopup from "./ErrorPopup";
 
-const DepositCash = ({ mobileNumber,inviteBy }) => {
+const DepositCash = ({ mobileNumber, inviteBy }) => {
   const [depositAmount, setDepositAmount] = useState("");
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [error, setError] = useState("");
@@ -26,7 +26,6 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
     };
     initializeSDK();
   }, []); // Run only once on mount
-
 
   const handleQuickAmountClick = (amount) => {
     setDepositAmount(amount);
@@ -55,7 +54,10 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
       const res = await postData("/api/v1/payment", data);
 
       if (res.data?.payment_session_id) {
-        return { sessionId: res.data.payment_session_id, orderId: res.data.order_id };
+        return {
+          sessionId: res.data.payment_session_id,
+          orderId: res.data.order_id,
+        };
       } else {
         setError("Failed to initiate payment. Please try again.");
         setShowErrorPopup(true);
@@ -105,8 +107,15 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
   };
 
   const handleDeposit = async () => {
-    if (!depositAmount || isNaN(depositAmount) || depositAmount < 120 || depositAmount > 100000) {
-      setError("Please enter a valid deposit amount between ₹120 and ₹100,000.");
+    if (
+      !depositAmount ||
+      isNaN(depositAmount) ||
+      depositAmount < 120 ||
+      depositAmount > 100000
+    ) {
+      setError(
+        "Please enter a valid deposit amount between ₹120 and ₹100,000."
+      );
       setShowErrorPopup(true);
       return;
     }
@@ -137,18 +146,32 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
 
   return (
     <div className="depositCash">
-      {showSuccessPopup && <SuccessPopup message={`Deposited ₹${depositAmount} successfully!`} handleClose={() => setShowSuccessPopup(false)} />}
-      {showErrorPopup && <ErrorPopup error={'Transaction failed. Please try again.'} handleClose={() => setShowErrorPopup(false)} />}
+      {showSuccessPopup && (
+        <SuccessPopup
+          message={`Deposited ₹${depositAmount} successfully!`}
+          handleClose={() => setShowSuccessPopup(false)}
+        />
+      )}
+      {showErrorPopup && (
+        <ErrorPopup
+          error={"Transaction failed. Please try again."}
+          handleClose={() => setShowErrorPopup(false)}
+        />
+      )}
       {/* Quick Amount Selection */}
       <div className="p-[4vw_2.666667vw_0] rounded-[2.666667vw] bg-white mb-[2.666667vw]">
-        <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">Quick amount</p>
+        <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">
+          Quick amount
+        </p>
         <div className="flex flex-wrap justify-between">
           {[1000, 3000, 5000, 10000, 30000, 50000].map((amount) => (
             <div
               key={amount}
               onClick={() => handleQuickAmountClick(amount)}
               className={`flex justify-center items-center w-[26.666667vw] h-[9.066667vw] ${
-                selectedAmount === amount ? "bg-[#4ca335] text-white" : "bg-white text-[#4ca335]"
+                selectedAmount === amount
+                  ? "bg-[#4ca335] text-white"
+                  : "bg-white text-[#4ca335]"
               } border-[.266667vw] border-[#4ca335] rounded-[13.333333vw] mb-[2.666667vw] cursor-pointer`}
             >
               ₹{amount.toLocaleString()}
@@ -159,9 +182,13 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
 
       {/* Deposit Amount Input */}
       <div className="p-[4vw_2.666667vw_2.666667vw] rounded-[2.666667vw] bg-white mb-[2.666667vw]">
-        <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">Deposit amount</p>
+        <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">
+          Deposit amount
+        </p>
         <div className="border border-[#d9d9d9] rounded-[2.133333vw] h-[12.8vw] flex items-center w-full p-[2.666667vw_4.266667vw] overflow-hidden text-[#323233] text-[3.733333vw] bg-white">
-          <span className="text-[3.733333vw] text-[#4ca335] mr-[1.333333vw]">₹</span>
+          <span className="text-[3.733333vw] text-[#4ca335] mr-[1.333333vw]">
+            ₹
+          </span>
           <input
             type="tel"
             inputMode="numeric"
@@ -172,7 +199,9 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
             disabled={loading}
           />
         </div>
-        {error && <p className="text-red-500 text-[3.733333vw] mt-[1vw]">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-[3.733333vw] mt-[1vw]">{error}</p>
+        )}
       </div>
 
       {/* Deposit Button */}
@@ -184,7 +213,12 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
         } w-full outline-none`}
         type="button"
         onClick={handleDeposit}
-        disabled={!depositAmount || depositAmount < 200 || depositAmount > 100000 || loading}
+        disabled={
+          !depositAmount ||
+          depositAmount < 120 ||
+          depositAmount > 100000 ||
+          loading
+        }
       >
         {loading ? "Processing..." : "To Deposit"}
       </button>
