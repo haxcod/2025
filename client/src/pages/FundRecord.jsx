@@ -46,6 +46,8 @@ const FundRecord = () => {
       const response = await fetchData("/api/v1/transactions", {
         params: { mobile: userData.mobile },
       });
+      console.log(response?.data);
+      
 
       if (response?.data?.transactions.length > 0) {
         setFundData(response.data.transactions); // Store all data

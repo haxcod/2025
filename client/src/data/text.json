@@ -68,7 +68,7 @@
       "totalRevenue": 1000,
       "currentPrice": 800,
       "vip": 2,
-      "availability": "Active",
+      "availability": "Inactive",
       "purchaseCount": 3
     },
     {
@@ -92,7 +92,7 @@
       "totalRevenue": 1960,
       "currentPrice": 1800,
       "vip": 3,
-      "availability": "Active",
+      "availability": "Inactive",
       "purchaseCount": 5
     },
     {
@@ -104,7 +104,7 @@
       "totalRevenue": 840,
       "currentPrice": 700,
       "vip": 2,
-      "availability": "Active",
+      "availability": "Inactive",
       "purchaseCount": 3
     },
     {

@@ -10,13 +10,11 @@ const validateFields = (fields) => {
 };
 
 const createUser = async (req, res) => {
-  const { name, email, mobile, password,inviteCode,fingerprint } = req.body;
+  const { name, email, mobile, password, inviteCode, fingerprint } = req.body;
 
   try {
-    // Validate required fields
     validateFields({ name, email, mobile, password });
-    // Call service to create the user
-    const user = await userService.createUser(name, email, mobile, password,inviteCode,fingerprint);
+    const user = await userService.createUser(name, email, mobile, password, inviteCode, fingerprint);
     res.status(201).json({
       status: 201,
       message: 'User registered successfully',
@@ -32,23 +30,23 @@ const createUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { mobile, password } = req.body;
-  
+
   try {
-    // Validate required fields
     validateFields({ mobile, password });
 
-    // Call service to log in the user
     const user = await userService.loginUser(mobile, password);
-    const userData = {_id:user._id}
-    const token = userService.createJWT(userData)
-    if(!token){
+    const userData = { _id: user._id };
+    const token = userService.createJWT(userData);
+
+    if (!token) {
       return res.status(500).json({
         status: 500,
-        message: 'Failed to create jwt',
+        message: 'Failed to create JWT',
         data: {},
-        err:"server error"
+        error: "Server error"
       });
     }
+
     res.status(200).json({
       status: 200,
       message: 'Login successful',
@@ -56,8 +54,8 @@ const loginUser = async (req, res) => {
       token,
     });
   } catch (err) {
-    res.status(err.status || 400).json({
-      status: err.status || 400,
+    res.status(err.status || 401).json({
+      status: err.status || 401,
       message: err.message || 'Failed to log in user',
     });
   }
@@ -65,29 +63,22 @@ const loginUser = async (req, res) => {
 
 const getInviteUser = async (req, res) => {
   try {
-    // Extract `id` from query parameters
-    const { userId } = req.query;  // Extract from query params
-     
-    // Validate `id`
+    const { userId } = req.query;
+
     if (!userId) {
       return res.status(400).json({
         status: 400,
-        message: "ID is required in query parameters.",
+        message: "userId is required in query parameters.",
       });
     }
 
-    // Call the service to get users
     const inviteUser = await userService.getInvitedUsers(userId);
-
-    // Respond with the result
     res.status(200).json({
       status: 200,
       data: inviteUser,
     });
   } catch (error) {
-    // Handle errors gracefully
     console.error("Error fetching invite users:", error);
-
     res.status(500).json({
       status: 500,
       message: "An error occurred while fetching invite users.",
@@ -96,18 +87,44 @@ const getInviteUser = async (req, res) => {
   }
 };
 
-const updatePassword = async (req,res)=>{
-  const {identifier,password} = req.body;
-  validateFields({ identifier, password });
-  try{
-   userService.passwordChange(identifier,password);
-   res.json({ success: true, message: 'Password updated successfully' });
-  }catch(err){
-    console.error('Error updating password:', error);
+const updatePassword = async (req, res) => {
+  const { identifier, password } = req.body;
+
+  try {
+    validateFields({ identifier, password });
+
+    await userService.passwordChange(identifier, password);
+    res.json({ success: true, message: 'Password updated successfully' });
+  } catch (err) {
+    console.error('Error updating password:', err);
     res.status(500).json({ success: false, message: 'Server error' });
   }
+};
 
-}
+const findInvitedByUser = async (req, res) => {
+  const { userId } = req.query;
 
+  try {
+    if (!userId) {
+      return res.status(400).json({
+        status: 400,
+        message: "inviteBy is required in query parameters.",
+      });
+    }
 
-module.exports = { createUser, loginUser,getInviteUser,updatePassword };
+    const response = await userService.getInviteByUserById(userId);
+    res.status(200).json({
+      status: 200,
+      data: response,
+    });
+  } catch (error) {
+    console.error("Error fetching invitedBy users:", error);
+    res.status(500).json({
+      status: 500,
+      message: "An error occurred while fetching inviteBy users.",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { createUser, loginUser, getInviteUser, updatePassword, findInvitedByUser };

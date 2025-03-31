@@ -86,6 +86,11 @@ const transactionDataGet = async (mobile) => {
                                     $sum: {
                                         $cond: [{ $eq: ["$type", "revenue"] }, "$amount", 0]
                                     }
+                                },
+                                inviteBonus: {
+                                    $sum: {
+                                        $cond: [{ $eq: ["$type", "invite"] }, "$amount", 0]
+                                    }
                                 }
                             }
                         },
@@ -93,10 +98,11 @@ const transactionDataGet = async (mobile) => {
                             $project: {
                                 _id: 0,
                                 totalDeposit: { $subtract: ["$totalDeposit", "$totalBuy"] },
-                                withdrawBalance: { $subtract: ["$totalRevenue", "$totalDebit"] },
+                                withdrawBalance: { $add: [{ $subtract: ["$totalRevenue", "$totalDebit"] }, "$inviteBonus"] },
                                 totalCredit: 1,
                                 totalDebit: 1,
                                 totalRevenue: 1,
+                                inviteBonus:1,
                                 totalBalance: { $subtract: ["$totalCredit", "$totalDebit"] }
                             }
                         }
@@ -123,7 +129,7 @@ const transactionDataGet = async (mobile) => {
         const transactions = result[0].transactions;
         const summary = result[0].summary.length > 0
             ? result[0].summary[0]
-            : { totalCredit: 0, totalDebit: 0, totalBalance: 0, totalDeposit: 0, withdrawBalance: 0, totalRevenue: 0 };
+            : { totalCredit: 0, totalDebit: 0, totalBalance: 0, totalDeposit: 0, withdrawBalance: 0, totalRevenue: 0,inviteBonus:0 };
 
         const todayRevenue = result[0].todayRevenue.length > 0 ? result[0].todayRevenue[0].todayRevenue : 0;
 
@@ -134,7 +140,6 @@ const transactionDataGet = async (mobile) => {
         throw err;
     }
 };
-
 
 const generateOrderId = () => {
     return crypto.randomUUID().replace(/-/g, '').substr(0, 12);

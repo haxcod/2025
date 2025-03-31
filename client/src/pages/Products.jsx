@@ -22,33 +22,33 @@ const Products = () => {
   const [current, setCurrent] = useState(0);
   const { userData } = UserData();
   const { summary, fetchTransactions } = useTransactionStore();
-  const { products, fetchAllProducts } = useProductStore();
+  const { products, loading, fetchAllProducts } = useProductStore();
 
   // Structure tabs using JSON data
   const productTabs = [
-    { 
-      name: "Agriculture Funds", 
-      category: "AF", 
-      icon: fundIcon1, 
-      iconActive: fundIcon1Active 
+    {
+      name: "Agriculture Funds",
+      category: "AF",
+      icon: fundIcon1,
+      iconActive: fundIcon1Active,
     },
-    { 
-      name: "Gold Funds", 
-      category: "GF", 
-      icon: fundIcon2, 
-      iconActive: fundIcon2Active 
+    {
+      name: "Gold Funds",
+      category: "GF",
+      icon: fundIcon2,
+      iconActive: fundIcon2Active,
     },
-    { 
-      name: "Startups Funds", 
-      category: "BF", 
-      icon: fundIcon3, 
-      iconActive: fundIcon3Active 
+    {
+      name: "Startups Funds",
+      category: "BF",
+      icon: fundIcon3,
+      iconActive: fundIcon3Active,
     },
-    { 
-      name: "Innovation Funds", 
-      category: "TF", 
-      icon: fundIcon4, 
-      iconActive: fundIcon4Active 
+    {
+      name: "Innovation Funds",
+      category: "TF",
+      icon: fundIcon4,
+      iconActive: fundIcon4Active,
     },
   ];
 
@@ -56,7 +56,6 @@ const Products = () => {
     ...tab,
     data: products.filter((product) => product.fundId.startsWith(tab.category)),
   }));
-  
 
   const currentProducts = categorizedProducts[current]?.data || [];
 
@@ -70,6 +69,7 @@ const Products = () => {
     const productData = {
       product,
       mobile: userData.mobile,
+      invitedBy: userData.invitedBy,
       totalCredit: summary.totalDeposit,
     };
     navigate("/profile", { state: { productData } });
@@ -111,10 +111,12 @@ const Products = () => {
         </div>
 
         <div className="mt-[-3.2vw] pt-[3.2vw] mb-[20vw] rounded-t-[5.333333vw] bg-[#f0f1f3] z-0 flex-1 overflow-y-auto h-screen">
-          {currentProducts.length > 0 ? (
-            currentProducts.map((product, index) => (
+          {loading ? (
+            <p className="text-center p-4">Loading...</p>
+          ) : currentProducts.length > 0 ? (
+            currentProducts.map((product) => (
               <Product
-                key={index}
+                key={product.id || product._id} // Prefer a unique identifier
                 {...product}
                 handleInvest={() => handleClick(product)}
               />

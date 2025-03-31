@@ -1,7 +1,7 @@
 const userModal = require('../models/user.model');
 const rechargeModal = require('../models/transaction.model')
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 const createUser = async (name, email, mobile, password, inviteCode, fingerprint) => {
   try {
@@ -92,19 +92,25 @@ const verifyJWT = (token) => {
 
 const passwordChange = async (identifier, password) => {
   try {
-    ;
+    const user = await userModal.findOne({ $or: [{ mobile: identifier }, { email: identifier }] });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const changeData = await userModal.findOneAndUpdate(
-      { $or: [{ mobile: identifier }, { email: identifier }] },
+    const updatedUser = await userModal.findOneAndUpdate(
+      { _id: user._id },
       { $set: { password: hashedPassword } },
       { new: true, runValidators: true }
     );
-    return changeData;
+
+    return updatedUser;
   } catch (error) {
-    console.error('Error updating password:', error);
+    console.error("Error updating password:", error);
     throw error;
   }
-}
+};
+
 
 const getInvitedUsers = async (userId) => {
   try {
@@ -155,16 +161,18 @@ const getInvitedUsers = async (userId) => {
 };
 
 
-const getUserById = async (id) => {
+const getInviteByUserById = async (id) => {
   try {
-    const response = userModal.findById(id);
+    const response = await userModal.findById(id).select('mobile');
     return response;
   } catch (err) {
+    console.error("Error fetching user by ID:", err);
     throw err;
   }
-}
+};
 
 
 
 
-module.exports = { createUser, loginUser, getInvitedUsers, passwordChange, createJWT, verifyJWT, getUserById };
+
+module.exports = { createUser, loginUser, getInvitedUsers, passwordChange, createJWT, verifyJWT, getInviteByUserById };

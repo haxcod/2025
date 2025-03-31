@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { TbDiamondFilled } from "react-icons/tb";
-import { postData } from "../services/apiService";
+import { fetchData, postData } from "../services/apiService";
 import UserData from "../hooks/UserData";
 import { load } from "@cashfreepayments/cashfree-js";
 
-const DepositCash = ({ mobileNumber }) => {
+const DepositCash = ({ mobileNumber,inviteBy }) => {
   const [depositAmount, setDepositAmount] = useState("");
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [error, setError] = useState("");
@@ -72,8 +71,8 @@ const DepositCash = ({ mobileNumber }) => {
         console.log(res.data);
   
         if (res.data.payment_status === "SUCCESS") {
-          createTransaction("completed");
-          alert("Payment verified successfully!");
+          await createTransaction("completed");
+        
         } else {
           createTransaction("failed");
           alert("Payment failed or canceled.");
@@ -98,11 +97,10 @@ const DepositCash = ({ mobileNumber }) => {
         description: "Deposit",
         status,
       };
-
       const response = await postData("/api/v1/transactions", allData);
 
       if (response.status === 201) {
-        alert(`Deposited ₹${depositAmount} successfully!`);
+        // alert(`Deposited ₹${depositAmount} successfully!`);
         setDepositAmount("");
         setSelectedAmount(null);
         setError("");
@@ -136,7 +134,7 @@ const DepositCash = ({ mobileNumber }) => {
       await cashfreeRef.current.checkout(checkoutOptions);
       console.log("Payment initialized");
 
-      verifyPayment(orderId);
+     await verifyPayment(orderId);
     } catch (error) {
       console.error("Error during deposit:", error);
       setError("There was an error processing your deposit. Please try again.");

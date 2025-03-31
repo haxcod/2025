@@ -19,8 +19,8 @@ const transactionSchema = new mongoose.Schema(
             type: String,
             required: [true, "Transaction type is required."],
             enum: {
-                values: ['credit', 'debit', 'buy', 'revenue'],
-                message: "Transaction type must be 'credit', 'debit', 'buy', or 'revenue'.",
+                values: ['credit', 'debit', 'buy', 'revenue','invite'],
+                message: "Transaction type must be 'credit', 'debit', 'buy', 'invite', or 'revenue'.",
             },
         },
         description: {

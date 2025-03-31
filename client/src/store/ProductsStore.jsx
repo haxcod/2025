@@ -12,16 +12,14 @@ const fetchProducts = async (mobile) => {
 
     // Fetch all available products
     const products = await fetchData("/api/v1/product");
-    
 
     // Process products to check purchase limits
     const updatedProducts = products?.data?.map((product) => {
- 
-      const ownedProducts = myProducts?.data?.filter(
-        (myProd) => myProd.fundId === product.fundId
-      ) || []; // Ensure it defaults to an empty array
-      
-      
+      const ownedProducts =
+        myProducts?.data?.filter(
+          (myProd) => myProd.fundId === product.fundId
+        ) || []; // Ensure it defaults to an empty array
+
       const canBuyMore = ownedProducts
         ? ownedProducts.length < product.purchaseCount
         : true;
@@ -30,7 +28,7 @@ const fetchProducts = async (mobile) => {
         ...product,
         isPurchased: !!ownedProducts,
         canBuy: canBuyMore,
-        howMuchBuy:ownedProducts.length,
+        howMuchBuy: ownedProducts.length,
       };
     });
     return updatedProducts;

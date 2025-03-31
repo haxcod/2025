@@ -69,7 +69,7 @@ const About = () => {
       {/* Description Section */}
       <div className="mt-[24.4vw] text-black text-opacity-65 text-[3.2vw] rounded-[2.666667vw] bg-white p-[41.2vw_2.666667vw_5.066667vw_7.6vw]">
         {[
-          `DeHaat™ is one of the fastest-growing start-ups in the Agri-Tech sector & one of the very few companies providing end-to-end solutions & services to the farming community in India. We are building AI-enabled technologies to revolutionize supply chain & production efficiency in the farming sector.`,
+          `TradeX™ is one of the fastest-growing start-ups in the Agri-Tech sector & one of the very few companies providing end-to-end solutions & services to the farming community in India. We are building AI-enabled technologies to revolutionize supply chain & production efficiency in the farming sector.`,
           `Currently, we are operating in 12 Indian agrarian states with an extensive network of 11,000+ DeHaat Centers & 503 FPOs, serving 1.8 million+ farmers. We also provide AI-enabled crop advisory to farmers for 30+ crops in regional languages.`,
           `Founded by the alumni from IIT Delhi, IIT Kharagpur, IIM Ahmedabad & other top institutes - DeHaat is a fully funded start-up with an exceptional growth rate & is certified Great Place to Work 2 years in a row, 2022-2023 & 2023-2024. The impact we have created at grass root level over the last 12 years of our operations has been phenomenal & is recognized & felicitated by NASSCOM, Forbes, ET, Niti Aayog, Bill Gates Foundation & many more.`,
         ].map((paragraph, index) => (

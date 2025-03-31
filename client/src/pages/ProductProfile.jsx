@@ -1,19 +1,17 @@
 import { useState, useMemo } from "react";
 import { IoChevronBackSharp } from "react-icons/io5";
 import { useLocation, useNavigate } from "react-router-dom";
-import { postData } from "../services/apiService";
+import { fetchData, postData } from "../services/apiService";
 
 const ProductProfile = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
 
-  const { product, mobile, totalCredit } = state?.productData ?? {
+  const { product, invitedBy, mobile, totalCredit } = state?.productData ?? {
     name: "Unknown",
     price: 0,
     description: "No details available",
   };
-
-
 
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -39,11 +37,11 @@ const ProductProfile = () => {
     if (!isNaN(value) && value > 0) {
       const remainingQuantity = product.purchaseCount - product.howMuchBuy;
 
-    if (value <= remainingQuantity) {
-      setQuantity(value);
-    } else {
-      alert(`You can only buy up to ${remainingQuantity} more units.`);
-    }
+      if (value <= remainingQuantity) {
+        setQuantity(value);
+      } else {
+        alert(`You can only buy up to ${remainingQuantity} more units.`);
+      }
     } else {
       setQuantity(0);
     }
@@ -62,10 +60,11 @@ const ProductProfile = () => {
   }
 
   const handleInvestNow = async () => {
-    if (quantity <= 0) {
+    if (!product || quantity <= 0) {
       alert("Please enter a valid quantity.");
       return;
     }
+
     if (product.currentPrice > totalCredit) {
       alert("Insufficient balance. Please recharge.");
       return;
@@ -83,6 +82,7 @@ const ProductProfile = () => {
       vip: product.vip || "",
       expireDate: expiryDate || "",
     };
+
     const transactionData = {
       mobile: mobile,
       type: "buy",
@@ -90,10 +90,12 @@ const ProductProfile = () => {
       description: product.fundName,
       status: "completed",
     };
+
     setLoading(true);
     setError("");
 
     try {
+      // Step 1: Process transaction
       const transactionResponse = await postData(
         "/api/v1/transactions",
         transactionData
@@ -103,20 +105,65 @@ const ProductProfile = () => {
         throw new Error("Transaction creation failed.");
       }
 
-      const { data, status } = await postData("/api/v1/my/product", allData);
+      // Step 2: Add investment record
+      const investmentResponse = await postData("/api/v1/my/product", allData);
 
-      if (status === 201) {
-        navigate(-1);
-        // alert("Investment successfully recorded!");
-        console.log("Response Data:", data);
-      } else {
-        throw new Error("Unexpected response from server.");
+      if (investmentResponse.status !== 201) {
+        throw new Error("Failed to record investment.");
       }
+      console.log(invitedBy);
+      
+
+      // Step 3: Add invite bonus (if applicable)
+      if (invitedBy) {
+        await addBonusFromInviteUser(invitedBy, product.currentPrice);
+      }
+
+      // Step 4: Navigate back on success
+      navigate(-1);
+      console.log("Investment successfully recorded!", investmentResponse.data);
     } catch (err) {
       console.error("API Error:", err);
-      setError("Failed to submit the investment. Please try again.");
+      setError(
+        err.message || "Failed to submit the investment. Please try again."
+      );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const addBonusFromInviteUser = async (invitedBy, currentPrice) => {
+    try {
+      if (!invitedBy || !currentPrice) {
+        console.error("Missing inviteBy or currentPrice.");
+        return;
+      }
+
+      // Fetch the invited user data
+      const inviteUser = await fetchData("/api/v1/find-invite-by", {
+        params: { userId:invitedBy },
+      });
+      
+
+      if (!inviteUser?.data?.mobile) {
+        console.log("No invited user found.");
+        return;
+      }
+
+      // Prepare invite bonus data
+      const bonusData = {
+        amount: currentPrice * 0.05, // 5% commission
+        mobile: inviteUser.data.mobile,
+        type: "invite",
+        description: "Invite Bonus Earned",
+        status: "completed",
+      };
+
+      // Send invite bonus transaction
+      const response = await postData("/api/v1/transactions", bonusData);
+      console.log("Invite Bonus Added:", response.data);
+    } catch (err) {
+      console.error("Error in addBonusFromInviteUser:", err.message || err);
     }
   };
 
@@ -216,7 +263,10 @@ const ProductProfile = () => {
           {[
             { label: "Each price", value: `₹ ${product.currentPrice || 0}` },
             { label: "Revenue", value: `${product.revenueDays || 0} days` },
-            { label: "Maximum", value: `${product.purchaseCount-product.howMuchBuy}` },
+            {
+              label: "Maximum",
+              value: `${product.purchaseCount - product.howMuchBuy}`,
+            },
           ].map((item, index) => (
             <div key={index} className="flex justify-between mb-[3.2vw]">
               <p className="text-[#666] text-[4vw]">{item.label}</p>

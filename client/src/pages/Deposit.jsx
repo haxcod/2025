@@ -36,7 +36,7 @@ const Deposit = () => {
       <div className="p-[0_4.533333vw]">
       {/* <AccountTypeSelector isActive={isActive} setIsActive={setIsActive} /> */}
         <AccountBalance balance={summary.totalDeposit} mobileNumber={userData.mobile}/>
-        <DepositCash  mobileNumber={userData.mobile}/>
+        <DepositCash  mobileNumber={userData.mobile} inviteBy={userData.inviteBy}/>
         {/* {isActive === 1 ? <DepositCash /> : <DepositUSDT />} */}
         <ExplanationDeposit/>
       </div>
