@@ -127,7 +127,7 @@ const DepositCash = ({ mobileNumber, inviteBy }) => {
     setError("");
 
     try {
-      const sessionData = await getSessionId(1);
+      const sessionData = await getSessionId(depositAmount);
       if (!sessionData) return;
 
       const { sessionId, orderId } = sessionData;
