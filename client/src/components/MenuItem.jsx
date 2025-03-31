@@ -1,4 +1,4 @@
-import{ useState } from 'react';
+import{ useRef, useState } from 'react';
 import orderIcon from '../assets/order_icon.png';
 import teamIcon from '../assets/team_icon.png';
 import vipIcon from '../assets/vip_icon.png';
@@ -15,18 +15,25 @@ import { useNavigate } from 'react-router-dom';
 import LanguageDialog from './LanguageDialog'; // Import LanguageDialog
 import { LogOut } from 'lucide-react';
 import { useCookies } from 'react-cookie';
+const TradeXApkUrl = "/TradeX.apk";
 
 const MenuItem = ({ balance, teamCount, commission }) => {
   const [showLanguageDialog, setShowLanguageDialog] = useState(false); // State for showing dialog
   const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies(["user"]); //
+  const linkRef = useRef(null);
+  const apkUrl = "/TradeX.apk"; // Ensure the file is in the 'public' folder
 
   const handleLogout = () => {
     removeCookie("user", { path: "/" }); 
-
-    // Redirect to the login page after logout
     navigate("/login");
   };
+
+  const handleApkDownload =()=>{
+    if (linkRef.current) {
+      linkRef.current.click();
+    }
+  }
 
   const items = [
     { name: 'My Order', icon: orderIcon, hint: `₹ ${balance || 0}`, to: '/myorder' },
@@ -39,7 +46,7 @@ const MenuItem = ({ balance, teamCount, commission }) => {
     { name: 'My Info', icon: myIcon, hint: '', to: '/myinfo' },
     { name: 'Reset Password', icon: passwordIcon, hint: '', to: '/resetpassword' },
     // { name: 'Language', icon: languageIcon, hint: '', to: '', onClick: () => setShowLanguageDialog(true) }, // Handle Language click
-    { name: 'Download App', icon: downloadIcon, hint: '', to: '' },
+    { name: 'Download App', icon: downloadIcon, hint: '', to: '',onClick: handleApkDownload, },
     {
       name: "Logout",
       icon: "",
@@ -52,10 +59,11 @@ const MenuItem = ({ balance, teamCount, commission }) => {
 
   return (
     <>
+    <a ref={linkRef} href={apkUrl} download="TradeX.apk" style={{ display: "none" }}></a>
       {items.map((item, index) => (
         <div
           key={index}
-          className="flex items-center justify-between border-b border-[#ECECEC] h-[12.266667vw] last:border-0"
+          className="flex items-center justify-between border-b border-[#ECECEC] h-[12.266667vw] last:border-0 cursor-pointer"
           onClick={() => item.onClick ? item.onClick() : navigate(item.to)}
         >
           <div className="flex items-center font-normal ">
