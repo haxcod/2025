@@ -7,7 +7,7 @@ const ExplanationDeposit = () => {
           <div>
             <p>
               ● The minimum deposit amount for fiat currency is
-              <strong style={{ color: "rgb(230, 0, 0)" }}> ₹200.00</strong>, while the minimum deposit amount for USDT is
+              <strong style={{ color: "rgb(230, 0, 0)" }}> ₹120.00</strong>, while the minimum deposit amount for USDT is
               <strong style={{ color: "rgb(230, 0, 0)" }}> ₮10.00</strong> USDT.
             </p>
             <p>● To expedite the deposit process, please ensure that the payment amount matches the amount entered.</p>
