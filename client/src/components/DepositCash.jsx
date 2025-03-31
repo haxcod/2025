@@ -138,7 +138,7 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
   return (
     <div className="depositCash">
       {showSuccessPopup && <SuccessPopup message={`Deposited ₹${depositAmount} successfully!`} handleClose={() => setShowSuccessPopup(false)} />}
-      {showErrorPopup && <ErrorPopup error={error} message={error} handleClose={() => setShowErrorPopup(false)} />}
+      {showErrorPopup && <ErrorPopup error={'Transaction failed. Please try again.'} handleClose={() => setShowErrorPopup(false)} />}
       {/* Quick Amount Selection */}
       <div className="p-[4vw_2.666667vw_0] rounded-[2.666667vw] bg-white mb-[2.666667vw]">
         <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">Quick amount</p>
