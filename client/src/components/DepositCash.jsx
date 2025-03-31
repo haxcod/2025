@@ -75,10 +75,10 @@ const DepositCash = ({ mobileNumber, inviteBy }) => {
     try {
       const res = await postData("/api/v1/verify", { orderId });
        console.log(res);
-       console.log(res?.data?.payment_status);
+       console.log(res?.data?.order_status);
        
        
-      if (res?.data?.payment_status === "PAID") {
+      if (res?.data?.order_status === "PAID") {
         await createTransaction("completed");
         setShowSuccessPopup(true);
       } else {
