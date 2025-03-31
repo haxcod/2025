@@ -33,7 +33,7 @@ const isClaimed = async (productId, amount) => {
         const product = await productModal.myProduct.findById(productId);
         const currentClaimed = parseInt(product.claimed);
         const newClaimed = currentClaimed + amount;
-        const updatedProduct = await productModal.findByIdAndUpdate(
+        const updatedProduct = await productModal.myProduct.findByIdAndUpdate(
             productId, // Find the product by ID
             { $set: { claimed: newClaimed } }, // Update claimed and optionally mobile
             { new: true } // Return the updated document
