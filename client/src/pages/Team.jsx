@@ -6,18 +6,23 @@ import InviteList from "../components/InviteList";
 import { IoIosArrowDown } from "react-icons/io";
 import UserData from "../hooks/UserData";
 import { fetchData } from "../services/apiService";
+import useTransactionStore from "../store/TransactionStore";
+
 
 const Team = () => {
   const [inviteUrl, setInviteUrl] = useState("");
   const navigate = useNavigate();
   const data = UserData();
   const [invitedData, setInvitedData] = useState([]);
+  const { todayInviteBonus,summary } = useTransactionStore();
+
   useEffect(() => {
     if (data?.userData?.id) {
       const currentUrl = window.location.origin;
       setInviteUrl(`${currentUrl}/register?inviteCode=${data.userData.inviteCode}`);
     }
   }, [data]);
+  
 
   const handleCopyLink = () => {
     navigator.clipboard
@@ -69,12 +74,12 @@ const Team = () => {
       >
         <div className="mb-[5.333333vw]">
           <p>Obtain Today Commission</p>
-          <p className="font-bold text-[6.4vw] mt-[1.333333vw]">₹{invitedData.todayCommission || 0}</p>
+          <p className="font-bold text-[6.4vw] mt-[1.333333vw]">₹{todayInviteBonus || 0}</p>
         </div>
         <div className="flex items-center justify-between leading-[4.333333vw]">
           <div>
             <p>Obtain Total Commission</p>
-            <p className="font-medium text-[5.333333vw] mt-[1.333333vw]">₹{invitedData.totalCommission || 0}</p>
+            <p className="font-medium text-[5.333333vw] mt-[1.333333vw]">₹{summary.inviteBonus || 0}</p>
           </div>
           <div>
             <p>Total number of teams</p>

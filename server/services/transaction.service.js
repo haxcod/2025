@@ -14,7 +14,7 @@ const transactionData = async (mobile, amount, type, description) => {
 
             throw new Error("All fields (mobile, amount, type,description) are required.");
         }
-        if (!['credit', 'debit', 'buy', 'revenue'].includes(type)) {
+        if (!['credit', 'debit', 'buy', 'revenue','invite'].includes(type)) {
             throw new Error("Invalid transaction type. Use 'credit' or 'debit'.");
         }
 
@@ -29,7 +29,6 @@ const transactionData = async (mobile, amount, type, description) => {
     }
 };
 const transactionDataGet = async (mobile) => {
-    
     try {
         if (!mobile) {
             throw new Error("Mobile number is required.");
@@ -102,7 +101,7 @@ const transactionDataGet = async (mobile) => {
                                 totalCredit: 1,
                                 totalDebit: 1,
                                 totalRevenue: 1,
-                                inviteBonus:1,
+                                inviteBonus: 1,
                                 totalBalance: { $subtract: ["$totalCredit", "$totalDebit"] }
                             }
                         }
@@ -121,6 +120,21 @@ const transactionDataGet = async (mobile) => {
                             }
                         },
                         { $project: { _id: 0, todayRevenue: 1 } }
+                    ],
+                    todayInviteBonus: [
+                        {
+                            $match: {
+                                type: "invite",
+                                createdAt: { $gte: startOfToday, $lte: endOfToday }
+                            }
+                        },
+                        {
+                            $group: {
+                                _id: null,
+                                todayInviteBonus: { $sum: "$amount" }
+                            }
+                        },
+                        { $project: { _id: 0, todayInviteBonus: 1 } }
                     ]
                 }
             }
@@ -129,17 +143,19 @@ const transactionDataGet = async (mobile) => {
         const transactions = result[0].transactions;
         const summary = result[0].summary.length > 0
             ? result[0].summary[0]
-            : { totalCredit: 0, totalDebit: 0, totalBalance: 0, totalDeposit: 0, withdrawBalance: 0, totalRevenue: 0,inviteBonus:0 };
+            : { totalCredit: 0, totalDebit: 0, totalBalance: 0, totalDeposit: 0, withdrawBalance: 0, totalRevenue: 0, inviteBonus: 0 };
 
         const todayRevenue = result[0].todayRevenue.length > 0 ? result[0].todayRevenue[0].todayRevenue : 0;
-
-        return { transactions, summary, todayRevenue };
+        const todayInviteBonus = result[0].todayInviteBonus.length > 0 ? result[0].todayInviteBonus[0].todayInviteBonus : 0;
+       
+        return { transactions, summary, todayRevenue, todayInviteBonus };
 
     } catch (err) {
         console.error("Error in transactionDataGet service:", err.message || err);
         throw err;
     }
 };
+
 
 const generateOrderId = () => {
     return crypto.randomUUID().replace(/-/g, '').substr(0, 12);

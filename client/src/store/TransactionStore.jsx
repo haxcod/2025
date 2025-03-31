@@ -15,6 +15,8 @@ const useTransactionStore = create(
         withdrawBalance: 0,
       },
       todayRevenue:0,
+      todayInviteBonus:0,
+
       loading: false,
       error: null,
 
@@ -28,8 +30,8 @@ const useTransactionStore = create(
             params: { mobile },
           });
 
-          const { transactions,todayRevenue, summary } = response.data;
-          set({ transactions,todayRevenue, summary, loading: false });
+          const { transactions,todayRevenue,todayInviteBonus, summary } = response.data;
+          set({ transactions,todayRevenue,todayInviteBonus, summary, loading: false });
         } catch (err) {
           set({ error: err.message, loading: false });
         }
@@ -47,6 +49,7 @@ const useTransactionStore = create(
             withdrawBalance: 0,
           },
           todayRevenue: 0,
+          todayInviteBonus:0,
         }),
     }),
     { name: "transaction-store" } // Saves state to localStorage

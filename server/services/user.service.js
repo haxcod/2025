@@ -115,50 +115,35 @@ const passwordChange = async (identifier, password) => {
 const getInvitedUsers = async (userId) => {
   try {
     // Fetch invited users
-    const invitedUsers = await userModal.find({ invitedBy: userId }).select("id mobile createdAt");
+    const invitedUsers = (await userModal.find({ invitedBy: userId }).select("id mobile createdAt")).reverse();
 
-    let activeUsers = 0;
-    let totalCommission = 0;
-    let todayCommission = 0;
-    const today = new Date().setHours(0, 0, 0, 0);
-
-    // Iterate through each invited user
-    for (const user of invitedUsers) {
-
-      // Get user's total recharge amount
-      const recharges = await rechargeModal.find({ mobile: user.mobile, type: 'credit' }).select("amount createdAt");
-
-      // Calculate total recharge amount
-      const totalRecharge = recharges.reduce((sum, rec) => sum + rec.amount, 0);
-
-      // Check if user is active (recharged ₹200 or more)
-      if (totalRecharge >= 200) {
-        activeUsers++;
-
-        // Calculate total commission (10% of all recharges)
-        totalCommission += totalRecharge * 0.1;
-
-        // Calculate today's commission
-        for (const recharge of recharges) {
-          const rechargeDate = new Date(recharge.createdAt).setHours(0, 0, 0, 0);
-          if (rechargeDate === today) {
-            todayCommission += recharge.amount * 0.1;
-          }
-        }
-      }
+    if (!invitedUsers.length) {
+      return { activeUsers: 0 };
     }
 
-    return {
-      activeUsers,          // Total active users
-      invitedUsers,         // List of invited users
-      todayCommission,      // Commission earned today
-      totalCommission,      // Total commission earned
-    };
+    const mobileNumbers = invitedUsers.map(user => user.mobile);
+
+    // Get total recharge amounts for invited users
+    const recharges = await rechargeModal.aggregate([
+      { $match: { mobile: { $in: mobileNumbers }, type: "credit" } },
+      {
+        $group: {
+          _id: "$mobile",
+          totalRecharge: { $sum: "$amount" },
+        }
+      }
+    ]);
+
+    // Count active users (those who recharged ₹200 or more)
+    const activeUsers = recharges.filter(r => r.totalRecharge >= 200).length;
+
+    return { invitedUsers, activeUsers };
   } catch (error) {
-    console.error("Error fetching invited users:", error);
+    console.error("Error fetching active invited users:", error);
     throw error;
   }
 };
+
 
 
 const getInviteByUserById = async (id) => {
