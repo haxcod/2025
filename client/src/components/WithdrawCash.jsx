@@ -16,8 +16,8 @@ const WithdrawCash = ({ bankData,balance }) => {
       setError('Please enter a valid withdrawal amount.');
       return;
     }
-    if (amount < 200) { 
-      setError('Minimum withdrawal amount is 200'); 
+    if (amount < 150) { 
+      setError('Minimum withdrawal amount is 150'); 
       return; 
     }
     if (amount > balance) { 
@@ -31,7 +31,6 @@ const WithdrawCash = ({ bankData,balance }) => {
       amount: withdrawAmount,
       mobile: bankData?.mobile,
       type: "debit",
-      status:'completed',
       description:'Withdraw'
     };
     setLoading(true);

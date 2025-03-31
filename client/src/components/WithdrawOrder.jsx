@@ -8,7 +8,7 @@ const WithdrawOrder = ({ data }) => {
   const formattedDate = format(createdAt, 'dd-MM-yyyy HH:mm:ss');
 
   // Calculate the fee and actual receipt (7% fee)
-  const fee = 7; // 7% fee
+  const fee = 10; // 10% fee
   const feeAmount = (amount * fee) / 100;
   const actualReceipt = amount - feeAmount;
 
