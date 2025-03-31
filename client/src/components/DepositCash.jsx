@@ -112,8 +112,8 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
   };
 
   const handleDeposit = async () => {
-    if (!depositAmount || isNaN(depositAmount) || depositAmount < 200 || depositAmount > 100000) {
-      setError("Please enter a valid deposit amount between ₹200 and ₹100,000.");
+    if (!depositAmount || isNaN(depositAmount) || depositAmount < 1 || depositAmount > 100000) {
+      setError("Please enter a valid deposit amount between ₹100 and ₹100,000.");
       return;
     }
 

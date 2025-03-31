@@ -22,14 +22,14 @@ const RewardsItems = ({userData}) => {
 
   // Reward Levels
   const rewards = [
-    { inviteCount: 5, rewardAmount: 1000 },
-    { inviteCount: 25, rewardAmount: 2000 },
-    { inviteCount: 75, rewardAmount: 5000 },
-    { inviteCount: 155, rewardAmount: 8000 },
-    { inviteCount: 500, rewardAmount: 30000 },
-    { inviteCount: 1000, rewardAmount: 70000 },
-    { inviteCount: 3000, rewardAmount: 250000 },
-    { inviteCount: 5000, rewardAmount: 500000 },
+    { inviteCount: 5, rewardAmount: 1000,rewardId:'IR01' },
+    { inviteCount: 25, rewardAmount: 2000,rewardId:'IR02' },
+    { inviteCount: 75, rewardAmount: 5000,rewardId:'IR03' },
+    { inviteCount: 155, rewardAmount: 8000,rewardId:'IR04' },
+    { inviteCount: 500, rewardAmount: 30000,rewardId:'IR05' },
+    { inviteCount: 1000, rewardAmount: 70000,rewardId:'IR06' },
+    { inviteCount: 3000, rewardAmount: 250000,rewardId:'IR07' },
+    { inviteCount: 5000, rewardAmount: 500000,rewardId:'IR08' },
   ];
 
   return (
