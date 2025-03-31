@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { fetchData, postData } from "../services/apiService";
 import UserData from "../hooks/UserData";
 import { load } from "@cashfreepayments/cashfree-js";
+import SuccessPopup from "./SuccessPopup";
+import ErrorPopup from "./ErrorPopup";
 
 const DepositCash = ({ mobileNumber,inviteBy }) => {
   const [depositAmount, setDepositAmount] = useState("");
@@ -10,6 +12,8 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
   const [loading, setLoading] = useState(false);
   const { userData } = UserData();
   const cashfreeRef = useRef(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
   // let cashfree;
 
   useEffect(() => {
@@ -50,41 +54,36 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
 
       const res = await postData("/api/v1/payment", data);
 
-      if (res.data && res.data.payment_session_id) {
+      if (res.data?.payment_session_id) {
         return { sessionId: res.data.payment_session_id, orderId: res.data.order_id };
       } else {
         setError("Failed to initiate payment. Please try again.");
+        setShowErrorPopup(true);
         return null;
       }
     } catch (err) {
       console.error("Error fetching session ID:", err);
       setError("There was an error processing your request.");
+      setShowErrorPopup(true);
       return null;
     }
   };
+
   const verifyPayment = async (orderId) => {
     try {
-      let res = await postData("/api/v1/verify", { orderId });
-  
-      if (res?.data) {
-        console.log(res);
-        console.log(res.data);
-  
-        if (res.data.payment_status === "SUCCESS") {
-          await createTransaction("completed");
-        
-        } else {
-          createTransaction("failed");
-          alert("Payment failed or canceled.");
-        }
+      const res = await postData("/api/v1/verify", { orderId });
+
+      if (res?.data?.payment_status === "PAID") {
+        await createTransaction("completed");
+        setShowSuccessPopup(true);
       } else {
         createTransaction("failed");
-        alert("Payment verification failed. Please try again.");
+        setShowErrorPopup(true);
       }
     } catch (error) {
       console.error("Error verifying payment:", error);
       createTransaction("failed");
-      alert("An error occurred while verifying the payment.");
+      setShowErrorPopup(true);
     }
   };
 
@@ -97,23 +96,18 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
         description: "Deposit",
         status,
       };
-      const response = await postData("/api/v1/transactions", allData);
-
-      if (response.status === 201) {
-        // alert(`Deposited ₹${depositAmount} successfully!`);
-        setDepositAmount("");
-        setSelectedAmount(null);
-        setError("");
-      }
+      await postData("/api/v1/transactions", allData);
     } catch (error) {
       console.error("Error creating transaction:", error);
       setError("Transaction failed. Please try again.");
+      setShowErrorPopup(true);
     }
   };
 
   const handleDeposit = async () => {
     if (!depositAmount || isNaN(depositAmount) || depositAmount < 120 || depositAmount > 100000) {
       setError("Please enter a valid deposit amount between ₹120 and ₹100,000.");
+      setShowErrorPopup(true);
       return;
     }
 
@@ -121,23 +115,21 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
     setError("");
 
     try {
-      const sessionData = await getSessionId(1);
+      const sessionData = await getSessionId(depositAmount);
       if (!sessionData) return;
 
       const { sessionId, orderId } = sessionData;
 
-      let checkoutOptions = {
+      await cashfreeRef.current.checkout({
         paymentSessionId: sessionId,
         redirectTarget: "_modal",
-      };
+      });
 
-      await cashfreeRef.current.checkout(checkoutOptions);
-      console.log("Payment initialized");
-
-     await verifyPayment(orderId);
+      await verifyPayment(orderId);
     } catch (error) {
       console.error("Error during deposit:", error);
       setError("There was an error processing your deposit. Please try again.");
+      setShowErrorPopup(true);
     } finally {
       setLoading(false);
     }
@@ -145,6 +137,8 @@ const DepositCash = ({ mobileNumber,inviteBy }) => {
 
   return (
     <div className="depositCash">
+      {showSuccessPopup && <SuccessPopup message={`Deposited ₹${depositAmount} successfully!`} handleClose={() => setShowSuccessPopup(false)} />}
+      {showErrorPopup && <ErrorPopup error={error} message={error} handleClose={() => setShowErrorPopup(false)} />}
       {/* Quick Amount Selection */}
       <div className="p-[4vw_2.666667vw_0] rounded-[2.666667vw] bg-white mb-[2.666667vw]">
         <p className="text-[#333] text-[4.266667vw] font-bold mb-[2.666667vw]">Quick amount</p>
