@@ -1,7 +1,7 @@
 const transactionService = require('../services/transaction.service');
 
 const createTransaction = async (req, res) => {
-    const { mobile, amount, type, description } = req.body;
+    const { status, mobile, amount, type, description } = req.body;
 
     // Validate input
     if (!mobile || !amount || !type || !description) {
@@ -14,7 +14,7 @@ const createTransaction = async (req, res) => {
 
     try {
         // Call the service to create the transaction
-        const transaction = await transactionService.transactionData(mobile, amount, type, description);
+        const transaction = await transactionService.transactionData(status,mobile, amount, type, description);
         return res.status(201).json({
             status: 201,
             message: "Transaction created successfully.",
@@ -31,7 +31,7 @@ const createTransaction = async (req, res) => {
 
 const getTransactions = async (req, res) => {
     const { mobile } = req.query;
-    
+
     // Validate input
     if (!mobile) {
         return res.status(400).json({

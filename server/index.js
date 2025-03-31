@@ -9,6 +9,7 @@ const commentRoutes = require('./routes/comment.routes');
 const productRoutes = require('./routes/product.routes');
 const userRoutes = require('./routes/user.routes')
 const otpRoutes = require('./routes/otp.routes')
+const rewardRoutes = require('./routes/reward.routes')
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -24,6 +25,7 @@ commentRoutes(app)
 productRoutes(app)
 userRoutes(app)
 otpRoutes(app)
+rewardRoutes(app)
 
 // Static Files
 app.use(express.static(path.join(__dirname, '../client/dist')));

@@ -7,7 +7,7 @@ Cashfree.XClientId = process.env.CLIENT_ID
 Cashfree.XClientSecret = process.env.CLIENT_SECRET
 Cashfree.XEnvironment = Cashfree.Environment.PRODUCTION
 
-const transactionData = async (mobile, amount, type, description) => {
+const transactionData = async (status,mobile, amount, type, description) => {
     try {
         // Validate input
         if (!mobile || !amount || !type || !description) {
@@ -19,7 +19,7 @@ const transactionData = async (mobile, amount, type, description) => {
         }
 
         // Create a new transaction record
-        const transaction = await transactionModel.create({ mobile, amount, type, description });
+        const transaction = await transactionModel.create({status, mobile, amount, type, description });
 
         return transaction;
     } catch (err) {
