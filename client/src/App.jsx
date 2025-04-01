@@ -23,6 +23,7 @@ import Registration from './pages/Registration';
 import ProtectedRoute from './ProtectedRoute';
 import PaymentConfirmation from './components/PaymentConfirmation';
 import ForgotPassword from './pages/ForgotPassword';
+import MaintenancePage from './pages/Maintenance';
 
 function App() {
   const routes = createBrowserRouter([
@@ -41,6 +42,10 @@ function App() {
     {
       path: '/forgotpassword',
       element: <ForgotPassword />,
+    },
+    {
+      path: '/maintenance',
+      element: <MaintenancePage />,
     },
     {
       path: '/my',
