@@ -43,7 +43,7 @@ const MenuItem = ({ balance, teamCount, commission }) => {
     { name: 'Bank Card', icon: bankIcon, hint: 'Please add bank card', to: '/bankcard' },
     { name: 'Commission', icon: commissionIcon, hint: `₹ ${commission || 0}`, to: '/commission' },
     { name: 'Help Center', icon: helpIcon, hint: '', to: '/help' },
-    { name: 'My Info', icon: myIcon, hint: '', to: '/myinfo' },
+    // { name: 'My Info', icon: myIcon, hint: '', to: '/myinfo' },
     { name: 'Reset Password', icon: passwordIcon, hint: '', to: '/resetpassword' },
     // { name: 'Language', icon: languageIcon, hint: '', to: '', onClick: () => setShowLanguageDialog(true) }, // Handle Language click
     { name: 'Download App', icon: downloadIcon, hint: '', to: '',onClick: handleApkDownload, },

@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import { MdCallReceived } from "react-icons/md";
 
-const ProductRevOrder = ({data}) => {
+const InviteBonusOrder = ({data}) => {
      const { amount, createdAt } = data;
        const formattedDate = format(createdAt, 'dd-MM-yyyy HH:mm:ss');
       return (
@@ -16,7 +16,7 @@ const ProductRevOrder = ({data}) => {
                <MdCallReceived className='text-[#4CA335] text-[4.668vw]'/>
             </div>
             <div>
-              <p className="text-black opacity-[0.85] text-[4vw] mb-[1.86667vw] font-medium">Revenue</p>
+              <p className="text-black opacity-[0.85] text-[4vw] mb-[1.86667vw] font-medium">Invited Bonus Earned</p>
               <p className="text-[#666666]">{formattedDate}</p>
             </div>
           </div>
@@ -28,11 +28,11 @@ const ProductRevOrder = ({data}) => {
     };
 
 
-    ProductRevOrder.propTypes = {
+    InviteBonusOrder.propTypes = {
         data: PropTypes.shape({
           amount: PropTypes.number.isRequired,
           createdAt: PropTypes.string,
         }).isRequired,
       };
 
-export default ProductRevOrder
+export default InviteBonusOrder

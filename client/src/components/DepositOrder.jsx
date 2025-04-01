@@ -24,7 +24,7 @@ const DepositOrder = ({ data }) => {
           <p className="text-[#666666]">{formattedDate}</p>
         </div>
       </div>
-      <div>
+      <div className="flex justify-end flex-col items-end">
         <div className="text-[4vw] font-bold text-[#4ca335]">+₹ {amount}</div>
         <div className="text-[#ffb51a] text-right text-[3.46667vw] mt-[1.86667vw] flex items-center">
           <div className="bg-[#ffb51a] rounded-full size-[3vw] flex justify-center items-center mr-[.9668vw]">

@@ -15,12 +15,12 @@ const createRewardData = async (req, res) => {
 };
 
 const getRewardData = async (req, res) => {
-    const { userId, rewardId } = req.query;
-    if (!userId || !rewardId) {
+    const { userId } = req.query;
+    if (!userId) {
         return res.status(400).json({ success: false, message: "All fields are required" });
     }
     try {
-        const data = await RewardService.getRewardData(userId, rewardId);
+        const data = await RewardService.getRewardData(userId);
         res.status(200).json({ success: true, data }); // ✅ Return response to client
     } catch (err) {
         console.error("Error in getRewardData:", err);

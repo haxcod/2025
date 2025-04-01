@@ -9,6 +9,7 @@ import { fetchData } from "../services/apiService";
 import ProductBuyOrder from "../components/ProductBuyOrder";
 import ProductRevOrder from "../components/ProductRevOrder";
 import UserData from "../hooks/UserData";
+import InviteBonusOrder from "../components/InviteBonusOrder";
 
 const TABS = {
   ACCOUNT: "Account",
@@ -97,6 +98,8 @@ const FundRecord = () => {
             return <ProductBuyOrder key={index} data={item} />;
           case "revenue":
             return <ProductRevOrder key={index} data={item} />;
+            case "invite":
+            return <InviteBonusOrder key={index} data={item} />;
           default:
             return null; // Handle unknown types gracefully
         }

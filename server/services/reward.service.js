@@ -13,7 +13,7 @@ const createRewardData = async (userId, rewardId, amount) => {
 
 const getRewardData = async (userId, rewardId) => {
     try {
-        const data = await Reward.find({ userId, rewardId }).select('rewardId');
+        const data = await Reward.find({ userId }).select('rewardId');
         return data; // Returns an array of matching rewards (empty if none found)
     } catch (err) {
         console.error("Error in getRewardData:", err);

@@ -79,9 +79,7 @@ const WithdrawOrder = ({ data }) => {
             {/* {status === 'pending' ? 'Processing' : status || 'Processing'} */}
           </div>
           <div
-            className={`flex items-center text-[3.47vw] ${getStatusColor(
-              status
-            )}`}
+            className={`flex items-center text-[3.47vw]`}
           >
             <div
               className={`w-[3vw] h-[3vw] rounded-full flex justify-center items-center mr-[0.97vw] ${

@@ -18,7 +18,7 @@ const ProductBuyOrder = ({data}) => {
               <p className="text-[#666666]">{formattedDate}</p>
             </div>
           </div>
-          <div>
+          <div className='flex justify-end flex-col items-end'>
             <div className="text-[4vw] flex h-full items-center justify-center font-bold text-[#ff4c4c]">-₹ {amount}</div>
             
           </div>
